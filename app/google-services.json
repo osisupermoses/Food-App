@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "575913016146",
+    "project_id": "food-ordering-app-56f0d",
+    "storage_bucket": "food-ordering-app-56f0d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:575913016146:android:8888b830cddbacb941188b",
+        "android_client_info": {
+          "package_name": "com.osisupermoses.food_ordering_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "575913016146-ghtdl8psv2gjdtig5h93m4ajvkuku1qp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnCaCW6jmkZXDKkQzvim_IYar4uPGcM_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "575913016146-ghtdl8psv2gjdtig5h93m4ajvkuku1qp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
