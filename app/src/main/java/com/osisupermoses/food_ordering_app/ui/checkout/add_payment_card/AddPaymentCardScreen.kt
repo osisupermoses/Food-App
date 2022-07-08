@@ -71,7 +71,9 @@ fun AddPaymentCardScreen(
                     textFieldValue = viewModel.cardNumber,
                     label = stringResource(id = R.string.card_holder_number),
                     keyboardType = KeyboardType.Number,
-                    onTextChanged = { viewModel.cardNumber = it },
+                    onTextChanged = {
+                        viewModel.cardNumber = it
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
@@ -103,7 +105,7 @@ fun AddPaymentCardScreen(
                         label = stringResource(id = R.string.cvc),
                         keyboardType = KeyboardType.Number,
                         onTextChanged = {
-                            if (it.text.count() <= 4)
+                            if (it.text.count() <= 3)
                             viewModel.cvcNumber = it
                         },
                         modifier = Modifier

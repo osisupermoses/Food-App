@@ -32,7 +32,7 @@ class MenuScreenViewModel @Inject constructor(
     }
 
     private fun getFoods() {
-//        state.value = MenuState(isLoading = true)
+        state.value = MenuState(isLoading = true)
         repository.getFoodList().onEach { response ->
             when(response) {
                 is Resource.Success -> {
@@ -56,6 +56,7 @@ class MenuScreenViewModel @Inject constructor(
     }
 
     private fun getRestaurants() {
+        state.value = MenuState(isLoading = true)
         repository.getRestaurantList().onEach { response ->
             when(response) {
                 is Resource.Success -> {

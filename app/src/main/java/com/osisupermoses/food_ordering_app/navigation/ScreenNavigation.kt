@@ -97,27 +97,8 @@ internal fun SetUpNavGraphNoBottomBar(
                 navArgument(Constants.DELIVERY_FEE) { type = NavType.StringType},
             )
         ) {
-            CheckoutScreen (
-                navigateUp = { navController.navigateUp() },
-                toPaymentCard = {
-//                        cardId ->
-//                    navController.navigate(Screens.NoBottomBarScreens.AddPaymentCardScreen.route + "/$cardId")
-                }
-            )
+            CheckoutScreen { navController.navigateUp() }
         }
-//        composable(
-//            route = Screens.NoBottomBarScreens.AddPaymentCardScreen.route + "/{${Constants.CARD_ID}}",
-//            arguments = listOf(
-//                navArgument(Constants.CARD_ID) {
-//                    type = NavType.IntType
-//                    defaultValue = -1
-//                }
-//            )
-//        ) {
-//            AddPaymentCardScreen {
-//                navController.navigateUp()
-//            }
-//        }
     }
 }
 

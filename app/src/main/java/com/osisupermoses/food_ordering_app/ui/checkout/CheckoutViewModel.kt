@@ -4,26 +4,36 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.osisupermoses.food_ordering_app.common.Constants
+import com.osisupermoses.food_ordering_app.common.Resource
+import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
 import com.osisupermoses.food_ordering_app.domain.model.Card
+import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.util.UiText
 import com.osisupermoses.food_ordering_app.util.paystack.CheckoutActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.lang.Math.abs
 import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
     private val paystackCheckout: CheckoutActivity,
+    private val authRepository: AuthRepository,
+    private val dataStoreRepository: DataStoreRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -102,19 +112,73 @@ class CheckoutViewModel @Inject constructor(
         )
     }
 
-    fun onClickSaveCard() {
-        state.value.cardList?.add(saveCardInfo())
-        Log.i(TAG, "CARD LIST: ${state.value.cardList}")
+    private fun saveLoggedinInUserIntoFirestore(nextScreen: () -> Unit) {
+        viewModelScope.launch {
+            authRepository.getUserInfoFromFirestore().onEach { result ->
+                when(result) {
+                    is Resource.Loading -> {
+                        state.value = CheckoutScreenState(isLoading = true)
+                    }
+                    is Resource.Success -> {
+                        val currentUserId = result.data?.filter { user ->
+                            user.userId == Firebase.auth.currentUser?.uid ||
+                                    user.email == Firebase.auth.currentUser?.email
+                        }
+
+                        if (currentUserId.isNullOrEmpty()) {
+                            saveToFirebase(cardInfo(), nextScreen)
+                        } else {
+                            nextScreen()
+                        }
+                        state.value = CheckoutScreenState(isLoading = false)
+                    }
+                    is Resource.Error -> {
+                        _errorChannel.send(UiText.DynamicString(result.message.toString()))
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
-    private fun saveCardInfo(): Card {
+    fun onClickSaveCard() {
+        val card: MutableList<Card> = mutableListOf(cardInfo())
+        state.value = CheckoutScreenState(cardList = card)
+        Log.i(TAG, "CARD LIST: ${state.value.cardList}")
+        Log.i(TAG, "CARD INFO: ${cardInfo()}")
+        Log.i(TAG, "CARD: $card")
+        saveToFirebase(cardInfo())
+    }
+
+    private fun cardInfo(): Card {
+        val random = abs((0..999999999999).random())
         return Card(
-            id = UUID.randomUUID().toString().toInt(),
+            id = random.toString().substring(0, 5).toInt(),
             cardHolder = nameText.text,
             cardLast4digits = cardNumber.text.takeLast(4),
             cardExpiry = expiryNumber.text,
             cardNumber = cardNumber.text,
-            cardCvv = cvcNumber.text)
+            cardCvv = cvcNumber.text
+        )
     }
 
+    private fun saveToFirebase(card: Card, nextScreen: () -> Unit = {}) {
+        val db = FirebaseFirestore.getInstance()
+        val dbCollection = db.collection(Constants.DB_Collection)
+
+        if (card.toString().isNotEmpty()) {
+            dbCollection.add(card)
+                .addOnSuccessListener { documentRef ->
+                    val docId = documentRef.id
+                    dbCollection.document(docId)
+                        .update(hashMapOf("id" to docId) as Map<String, Any>)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                nextScreen()
+                            }
+                        }.addOnFailureListener {
+                            Log.w("Error", "SaveToFirebase: Error updating doc", it)
+                        }
+                }
+        }
+    }
 }
