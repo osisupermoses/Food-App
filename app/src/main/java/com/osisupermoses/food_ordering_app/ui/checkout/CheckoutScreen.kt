@@ -46,7 +46,7 @@ fun CheckoutScreen(
     var successDialogIsVisible by remember { mutableStateOf(false) }
     var errorDialogIsVisible by remember { mutableStateOf(false) }
     var paymentCardIsVisible by remember { mutableStateOf(false) }
-    var checkoutPageIsVisible by remember { mutableStateOf(false) }
+    var checkoutPageIsVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = true) {
         viewModel.errorChannel.collect { error ->
