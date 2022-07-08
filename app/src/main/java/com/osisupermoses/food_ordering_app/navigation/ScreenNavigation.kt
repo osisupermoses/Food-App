@@ -21,7 +21,7 @@ const val NO_BOTTOM_BAR_ROUTE = "bottomBar"
 @Composable
 internal fun SetUpNavGraphNoBottomBar(
     navController: NavHostController,
-    startDestination: String = Screens.NoBottomBarScreens.WelcomeScreen.route
+    startDestination: String = Screens.NoBottomBarScreens.MenuScreen.route
 ) {
     AnimatedNavHost(
         navController = navController,

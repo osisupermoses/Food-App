@@ -80,4 +80,5 @@
     <string name="unsuccessful_payment">Oops.. Payment was not successful.</string>
     <string name="please_select_a_card">Please select a card</string>
     <string name="address_field_cannot_be_blank">Address field can\'t be blank</string>
+    <string name="please_input_an_address">Please input an address</string>
 </resources>

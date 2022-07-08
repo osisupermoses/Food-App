@@ -56,7 +56,7 @@ fun CheckoutScreen(
         }
     }
 
-    AnimatedVisibility(visible = checkoutPageIsVisible) {
+
         Scaffold(
             topBar = {
                 CheckoutHeader(
@@ -69,179 +69,187 @@ fun CheckoutScreen(
             },
             scaffoldState = scaffoldState
         ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .background(Color.White)
-            ) {
-                LazyColumn {
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                    item { SectionHeader(sectionTitle = stringResource(id = R.string.address)) }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
-                    item {
-                        Address(
-                            modifier = Modifier
-                                .padding(horizontal = MaterialTheme.spacing.medium)
-                                .fillMaxWidth(),
-                            address = viewModel.address,
-                            enabled = enabled,
-                            readOnly = readOnly,
-                            topText = stringResource(topText),
-                            onAddressValueChange = { viewModel.address = it },
-                            saveBtnVisibility = saveBtnVisibility,
-                            addTextTile = saveBtnVisibility,
-                            onEditAddressClick = {
-                                topText = R.string.you_can_edit
-                                readOnly = false
-                                enabled = true
-                                viewModel.address = it
-                                saveBtnVisibility = true
-                            },
-                            onSaveClick = {
-                                toasty(context, context.getString(R.string.address_saved))
-                                saveBtnVisibility = false
-                                readOnly = true
-                                enabled = false
-                                viewModel.address = it
-                            }
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium)) }
-                    item {
-                        Divider(
-                            modifier = Modifier.fillMaxWidth(),
-                            thickness = 1.dp,
-                            color = Color.LightGray
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                    item { SectionHeader(sectionTitle = stringResource(id = R.string.payment_method)) }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
-                    item {
-                        LazyRow {
-                            item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
-                            viewModel.state.value.cardList?.let {
-                                itemsIndexed(it.toList()) { index, cardholder ->
-                                    CardHolderItem(
-                                        lastFourDigits = cardholder.cardLast4digits,
-                                        painter = cardholder.cardIssuerIcon,
-                                        selected = viewModel.selectedCardHolderIndex == index,
-                                        onClickCard = { viewModel.selectedCardHolderIndex = index }
-                                    ) {
+            AnimatedVisibility(visible = checkoutPageIsVisible) {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxSize()
+                        .background(Color.White)
+                ) {
+                    LazyColumn {
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                        item { SectionHeader(sectionTitle = stringResource(id = R.string.address)) }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
+                        item {
+                            Address(
+                                modifier = Modifier
+                                    .padding(horizontal = MaterialTheme.spacing.medium)
+                                    .fillMaxWidth(),
+                                address = viewModel.address,
+                                enabled = enabled,
+                                readOnly = readOnly,
+                                topText = stringResource(topText),
+                                onAddressValueChange = { viewModel.address = it },
+                                saveBtnVisibility = saveBtnVisibility,
+                                addTextTile = saveBtnVisibility,
+                                onEditAddressClick = {
+                                    topText = R.string.you_can_edit
+                                    readOnly = false
+                                    enabled = true
+                                    viewModel.address = it
+                                    saveBtnVisibility = true
+                                },
+                                onSaveClick = {
+                                    if (it.isNotBlank()) {
+                                        toasty(context, context.getString(R.string.address_saved))
+                                        saveBtnVisibility = false
+                                        readOnly = true
+                                        enabled = false
+                                        viewModel.address = it
+                                    } else toasty(context, context.getString(R.string.please_input_an_address))
+                                }
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.medium)) }
+                        item {
+                            Divider(
+                                modifier = Modifier.fillMaxWidth(),
+                                thickness = 1.dp,
+                                color = Color.LightGray
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                        item { SectionHeader(sectionTitle = stringResource(id = R.string.payment_method)) }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
+                        item {
+                            LazyRow {
+                                item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
+                                viewModel.state.value.cardList?.let {
+                                    itemsIndexed(it.toList()) { index, cardholder ->
+                                        CardHolderItem(
+                                            lastFourDigits = cardholder.cardLast4digits,
+                                            painter = cardholder.cardIssuerIcon,
+                                            selected = viewModel.selectedCardHolderIndex == index,
+                                            onClickCard = {
+                                                viewModel.selectedCardHolderIndex = index
+                                            }
+                                        ) {
+                                            paymentCardIsVisible = true
+                                            checkoutPageIsVisible = false
+                                        }
+                                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+                                    }
+                                }
+                                item {
+                                    AddNewCard {
                                         paymentCardIsVisible = true
                                         checkoutPageIsVisible = false
                                     }
-                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
                                 }
+                                item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
                             }
-                            item {
-                                AddNewCard {
-                                    paymentCardIsVisible = true
-                                    checkoutPageIsVisible = false
-                                }
-                            }
-                            item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
                         }
-                    }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                    item {
-                        PaymentDetails(
-                            modifier = Modifier
-                                .padding(horizontal = MaterialTheme.spacing.medium)
-                                .fillMaxWidth(),
-                            itemPrice = viewModel.currencySymbol + viewModel.itemPrice,
-                            deliveryFee = viewModel.currencySymbol + viewModel.deliveryFee,
-                            discount = "${viewModel.currencySymbol}${viewModel.discount}",
-                            totalAmount = "${viewModel.currencySymbol}${viewModel.total}"
-                        )
-                    }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
-                    item {
-                        CheckoutButton(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 30.dp),
-                            totalAmt = "${viewModel.currencySymbol}${viewModel.total}"
-                        ) {
-                            if (viewModel.selectedCardHolderIndex != null && viewModel.address.isNotBlank()) {
-                                viewModel.makePayment(
-                                    context = context,
-                                    successScreen = {
-                                        successDialogIsVisible = true
-                                    },
-                                    failedScreen = {
-                                        errorDialogIsVisible = true
-                                    }
-                                )
-                            } else if (viewModel.address.isBlank()) {
-                                toasty(
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                        item {
+                            PaymentDetails(
+                                modifier = Modifier
+                                    .padding(horizontal = MaterialTheme.spacing.medium)
+                                    .fillMaxWidth(),
+                                itemPrice = viewModel.currencySymbol + viewModel.itemPrice,
+                                deliveryFee = viewModel.currencySymbol + viewModel.deliveryFee,
+                                discount = "${viewModel.currencySymbol}${viewModel.discount}",
+                                totalAmount = "${viewModel.currencySymbol}${viewModel.total}"
+                            )
+                        }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }
+                        item {
+                            CheckoutButton(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 30.dp),
+                                totalAmt = "${viewModel.currencySymbol}${viewModel.total}"
+                            ) {
+                                if (viewModel.selectedCardHolderIndex != null && viewModel.address.isNotBlank()) {
+                                    viewModel.makePayment(
+                                        context = context,
+                                        successScreen = {
+                                            successDialogIsVisible = true
+                                        },
+                                        failedScreen = {
+                                            errorDialogIsVisible = true
+                                        }
+                                    )
+                                } else if (viewModel.address.isBlank()) {
+                                    toasty(
+                                        context,
+                                        context.getString(R.string.address_field_cannot_be_blank)
+                                    )
+                                } else toasty(
                                     context,
-                                    context.getString(R.string.address_field_cannot_be_blank)
+                                    context.getString(R.string.please_select_a_card)
                                 )
-                            } else toasty(context, context.getString(R.string.please_select_a_card))
+                            }
+                        }
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraLarge)) }
+                    }
+                    if (successDialogIsVisible) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AwesomeCustomDialog(
+                                type = AwesomeCustomDialogType.SUCCESS,
+                                title = stringResource(R.string.payment_successful),
+                                desc = "TRANSACTION REFERENCE:" + viewModel.state.value.transReference,
+                                onDismiss = {
+                                    successDialogIsVisible = false
+                                }
+                            )
                         }
                     }
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraLarge)) }
-                }
-                if (successDialogIsVisible) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                    if (errorDialogIsVisible) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            AwesomeCustomDialog(
+                                type = AwesomeCustomDialogType.ERROR,
+                                title = stringResource(R.string.unsuccessful_payment),
+                                desc = ("REASON: " + viewModel.state.value.error),
+                                twoOptionsNeeded = true,
+                                onDismiss = {
+                                    errorDialogIsVisible = false
+                                },
+                                onRetry = {
+                                    viewModel.makePayment(context = context)
+                                    errorDialogIsVisible = false
+                                }
+                            )
+                        }
+                    }
+                    if (viewModel.state.value.isLoading) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CustomCircularProgressIndicator()
+                        }
+                    }
+                    AnimatedVisibility(
+                        visible = paymentCardIsVisible,
+                        enter = EnterTransition.None,
+                        exit = ExitTransition.None
                     ) {
-                        AwesomeCustomDialog(
-                            type = AwesomeCustomDialogType.SUCCESS,
-                            title = stringResource(R.string.payment_successful),
-                            desc = "TRANSACTION REFERENCE:" + viewModel.state.value.transReference,
-                            onDismiss = {
-                                successDialogIsVisible = false
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            AddPaymentCardScreen(viewModel) {
+                                checkoutPageIsVisible = true
+                                paymentCardIsVisible = false
                             }
-                        )
-                    }
-                }
-                if (errorDialogIsVisible) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        AwesomeCustomDialog(
-                            type = AwesomeCustomDialogType.ERROR,
-                            title = stringResource(R.string.unsuccessful_payment),
-                            desc = ("REASON: " + viewModel.state.value.error),
-                            twoOptionsNeeded = true,
-                            onDismiss = {
-                                errorDialogIsVisible = false
-                            },
-                            onRetry = {
-                                viewModel.makePayment(context = context)
-                                errorDialogIsVisible = false
-                            }
-                        )
-                    }
-                }
-                if (viewModel.state.value.isLoading) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CustomCircularProgressIndicator()
-                    }
-                }
-                AnimatedVisibility(
-                    visible = paymentCardIsVisible,
-                    enter = EnterTransition.None,
-                    exit = ExitTransition.None
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        AddPaymentCardScreen(viewModel) {
-                            checkoutPageIsVisible = true
-                            paymentCardIsVisible = false
                         }
                     }
                 }
             }
-        }
     }
 }
