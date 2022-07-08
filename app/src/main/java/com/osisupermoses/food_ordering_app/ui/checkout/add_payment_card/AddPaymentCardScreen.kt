@@ -43,14 +43,6 @@ fun AddPaymentCardScreen(
     viewModel: CheckoutViewModel,
     toCheckout: () -> Unit
 ) {
-
-//    var nameText by remember { mutableStateOf(TextFieldValue()) }
-////    var cardNumber = viewModel.cardNumber
-//    var cardNumber by remember { mutableStateOf(TextFieldValue()) }
-//    var expiryNumber by remember { mutableStateOf(TextFieldValue()) }
-//    var cvcNumber by remember { mutableStateOf(TextFieldValue()) }
-
-
     Column(modifier = Modifier.fillMaxSize()) {
         PaymentCard(
             viewModel.nameText,
@@ -98,7 +90,10 @@ fun AddPaymentCardScreen(
                         textFieldValue = viewModel.expiryNumber,
                         label = stringResource(id = R.string.exipry_date),
                         keyboardType = KeyboardType.Number,
-                        onTextChanged = { viewModel.expiryNumber = it },
+                        onTextChanged = {
+                            if (it.text.count() <= 4)
+                            viewModel.expiryNumber = it
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .padding(end = 8.dp)
@@ -107,7 +102,10 @@ fun AddPaymentCardScreen(
                         textFieldValue = viewModel.cvcNumber,
                         label = stringResource(id = R.string.cvc),
                         keyboardType = KeyboardType.Number,
-                        onTextChanged = { viewModel.cvcNumber = it },
+                        onTextChanged = {
+                            if (it.text.count() <= 4)
+                            viewModel.cvcNumber = it
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 8.dp)
