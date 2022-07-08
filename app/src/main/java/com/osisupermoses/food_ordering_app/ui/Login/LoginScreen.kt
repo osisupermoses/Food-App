@@ -154,8 +154,8 @@ fun LoginScreen(
                     ),
                     text = stringResource(R.string.btn_login)
                 ) {
-//                    loginViewModel.onLoginBtnClick(toMenuScreen)
-                    toMenuScreen.invoke()
+                    loginViewModel.onLoginBtnClick(toMenuScreen)
+//                    toMenuScreen.invoke() // for testing
                 }
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.small))
                 Row(
