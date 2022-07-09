@@ -1,16 +1,29 @@
 package com.osisupermoses.food_ordering_app.domain.model
 
 import androidx.annotation.DrawableRes
+import com.google.firebase.firestore.PropertyName
 import com.osisupermoses.food_ordering_app.R
 
 data class Card(
-    val id: Int? = null,
-    val cardHolder: String = "",
-    val cardNumber: String = "123412342342342",
-    val cardExpiry: String = "04/22",
-    val cardCvv: String = "203",
-    val cardIssuerIcon: Any? = R.drawable.mastercard_logo,
-    val cardLast4digits: String = "5532"
+    val id: String? = null,
+    @get:PropertyName("user_id")
+    @set:PropertyName("user_id")
+    var userId: String = "",
+    @get:PropertyName("card_holder")
+    @set:PropertyName("card_holder")
+    var cardHolder: String = "",
+    @get:PropertyName("card_expiry")
+    @set:PropertyName("card_expiry")
+    var cardExpiry: String = "04/22",
+    @get:PropertyName("card_cvv")
+    @set:PropertyName("card_cvv")
+    var cardCvv: String = "203",
+    @get:PropertyName("card_issuer_icon")
+    @set:PropertyName("card_issuer_icon")
+    var cardIssuerIcon: Any? = R.drawable.mastercard_logo,
+    @get:PropertyName("card_last_four")
+    @set:PropertyName("card_last_four")
+    var cardLast4digits: String = "5532"
 )
 
 enum class CardType(
@@ -25,17 +38,14 @@ enum class CardType(
 
 fun getCards() = listOf(
     Card(
-        id = 1,
         cardIssuerIcon = R.drawable.mastercard_logo,
         cardLast4digits = "2211"
     ),
     Card(
-        id = 2,
         cardIssuerIcon = R.drawable.verve,
         cardLast4digits = "9572"
     ),
     Card(
-        id = 3,
         cardIssuerIcon = R.drawable.visa,
         cardLast4digits = "0043"
     )

@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
@@ -26,7 +27,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.lang.Math.abs
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,6 +44,8 @@ class CheckoutViewModel @Inject constructor(
     var address by mutableStateOf("")
     val state = mutableStateOf(CheckoutScreenState())
 
+    val firebaseAuth = Firebase.auth
+
     var nameText by mutableStateOf(TextFieldValue())
     var expiryNumber by mutableStateOf(TextFieldValue())
     var cvcNumber by mutableStateOf(TextFieldValue())
@@ -60,6 +62,7 @@ class CheckoutViewModel @Inject constructor(
 
     init {
         paystackCheckout.initializePaystack()
+        getCardsFromFirestore()
     }
 
     fun makePayment(
@@ -112,27 +115,27 @@ class CheckoutViewModel @Inject constructor(
         )
     }
 
-    private fun saveLoggedinInUserIntoFirestore(nextScreen: () -> Unit) {
+    private fun getCardsFromFirestore(nextScreen: () -> Unit = {}) {
         viewModelScope.launch {
-            authRepository.getUserInfoFromFirestore().onEach { result ->
+            authRepository.getCardInfoFromFirestore().onEach { result ->
                 when(result) {
                     is Resource.Loading -> {
                         state.value = CheckoutScreenState(isLoading = true)
                     }
                     is Resource.Success -> {
-                        val currentUserId = result.data?.filter { user ->
-                            user.userId == Firebase.auth.currentUser?.uid ||
-                                    user.email == Firebase.auth.currentUser?.email
-                        }
-
-                        if (currentUserId.isNullOrEmpty()) {
-                            saveToFirebase(cardInfo(), nextScreen)
-                        } else {
-                            nextScreen()
-                        }
-                        state.value = CheckoutScreenState(isLoading = false)
+                        val cards = result.data?.toList()
+                        state.value = CheckoutScreenState(
+                            isLoading = false,
+                            cardList = cards
+                        )
+                        Log.i(TAG, "FIREBASE RESPONSE: ${result.data}")
+                        nextScreen.invoke()
                     }
                     is Resource.Error -> {
+                        state.value = CheckoutScreenState(
+                            isLoading = false,
+                            error = result.message ?: "Something went wrong"
+                        )
                         _errorChannel.send(UiText.DynamicString(result.message.toString()))
                     }
                 }
@@ -140,30 +143,66 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    fun onClickSaveCard() {
-        val card: MutableList<Card> = mutableListOf(cardInfo())
-        state.value = CheckoutScreenState(cardList = card)
-        Log.i(TAG, "CARD LIST: ${state.value.cardList}")
-        Log.i(TAG, "CARD INFO: ${cardInfo()}")
-        Log.i(TAG, "CARD: $card")
-        saveToFirebase(cardInfo())
+    fun onClickSaveCard(nextScreen: () -> Unit) {
+        viewModelScope.launch {
+            state.value = CheckoutScreenState(isLoading = true)
+            val card: MutableList<Card> = mutableListOf(cardInfo()!!)
+            state.value = CheckoutScreenState(cardList = card)
+            Log.i(TAG, "CARD LIST: ${state.value.cardList}")
+            Log.i(TAG, "CARD INFO: ${cardInfo()}")
+            Log.i(TAG, "CARD: $card")
+            when {
+                expiryNumber.text.count() < 4 -> {
+                    state.value = CheckoutScreenState(isLoading = false)
+                    _errorChannel.send(
+                        UiText.StringResource(
+                            R.string.please_enter_a_valid_expiry_date
+                        )
+                    )
+                }
+                cvcNumber.text.count() < 3 -> {
+                    state.value = CheckoutScreenState(isLoading = false)
+                    _errorChannel.send(
+                        UiText.StringResource(
+                            R.string.please_enter_a_valid_cvv_date
+                        )
+                    )
+                }
+                cardNumber.text.count() < 16 -> {
+                    state.value = CheckoutScreenState(isLoading = false)
+                    _errorChannel.send(
+                        UiText.StringResource(
+                            R.string.please_enter_a_valid_card_num
+                        )
+                    )
+                }
+                else -> cardInfo()?.let {
+                    saveToFirebase(
+                        it,
+                        nextScreen = {
+                            getCardsFromFirestore(nextScreen)
+                        }
+                    )
+                }
+            }
+        }
     }
 
-    private fun cardInfo(): Card {
-        val random = abs((0..999999999999).random())
-        return Card(
-            id = random.toString().substring(0, 5).toInt(),
-            cardHolder = nameText.text,
-            cardLast4digits = cardNumber.text.takeLast(4),
-            cardExpiry = expiryNumber.text,
-            cardNumber = cardNumber.text,
-            cardCvv = cvcNumber.text
-        )
+    private fun cardInfo(): Card? {
+        return firebaseAuth.currentUser?.let {
+            Card(
+                cardHolder = nameText.text,
+                userId = it.uid,
+                cardLast4digits = cardNumber.text.takeLast(4),
+                cardExpiry = expiryNumber.text,
+                cardCvv = cvcNumber.text
+            )
+        }
     }
 
     private fun saveToFirebase(card: Card, nextScreen: () -> Unit = {}) {
         val db = FirebaseFirestore.getInstance()
-        val dbCollection = db.collection(Constants.DB_Collection)
+        val dbCollection = db.collection(Constants.DB_Collection_Cards)
 
         if (card.toString().isNotEmpty()) {
             dbCollection.add(card)
@@ -178,6 +217,24 @@ class CheckoutViewModel @Inject constructor(
                         }.addOnFailureListener {
                             Log.w("Error", "SaveToFirebase: Error updating doc", it)
                         }
+                }
+        }
+    }
+
+    private fun updateDbWithId(card: Card, nextScreen: () -> Unit) {
+        if (cardNumber.text.isNotEmpty()) {
+            val cardId = card.id.toString()
+            FirebaseFirestore.getInstance()
+                .collection(Constants.DB_Collection_Cards)
+                .document(cardId)
+                .update(hashMapOf("id" to cardId) as Map<String, Any>)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        nextScreen()
+                    }
+                }
+                .addOnFailureListener {
+                    Log.w("Error", "Error updating document", it)
                 }
         }
     }

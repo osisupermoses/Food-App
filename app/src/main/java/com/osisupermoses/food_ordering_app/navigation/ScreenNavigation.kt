@@ -4,8 +4,8 @@ import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.ui.Login.LoginScreen
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutScreen
@@ -21,16 +21,16 @@ const val NO_BOTTOM_BAR_ROUTE = "bottomBar"
 @Composable
 internal fun SetUpNavGraphNoBottomBar(
     navController: NavHostController,
-    startDestination: String = Screens.NoBottomBarScreens.MenuScreen.route
+    startDestination: String
 ) {
-    AnimatedNavHost(
+    NavHost(
         navController = navController,
         startDestination = startDestination,
         route = NO_BOTTOM_BAR_ROUTE,
-        enterTransition = { defaultFoodAppEnterTransition(initialState, targetState) },
-        exitTransition = { defaultFoodAppExitTransition(initialState, targetState) },
-        popEnterTransition = { defaultFoodAppPopEnterTransition() },
-        popExitTransition = { defaultFoodAppPopExitTransition() }
+//        enterTransition = { defaultFoodAppEnterTransition(initialState, targetState) },
+//        exitTransition = { defaultFoodAppExitTransition(initialState, targetState) },
+//        popEnterTransition = { defaultFoodAppPopEnterTransition() },
+//        popExitTransition = { defaultFoodAppPopExitTransition() }
     ) {
         composable(Screens.NoBottomBarScreens.WelcomeScreen.route) {
             WelcomeScreen {

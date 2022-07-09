@@ -13,4 +13,6 @@ object Constants {
     const val DELIVERY_FEE = "deliveryFee"
 
     const val CARD_ID = "cardId"
+
+    const val DB_Collection_Cards = "cards"
 }

@@ -5,6 +5,6 @@ import com.osisupermoses.food_ordering_app.domain.model.Card
 data class CheckoutScreenState(
     val isLoading: Boolean = false,
     val error: String? = null,
-    var cardList: MutableList<Card>? = null,
+    var cardList: List<Card>? = null,
     val transReference: String? = null
 )

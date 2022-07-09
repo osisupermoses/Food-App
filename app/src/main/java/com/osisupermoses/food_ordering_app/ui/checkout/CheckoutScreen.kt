@@ -77,16 +77,17 @@ fun CheckoutScreen(
                 modifier = Modifier.wrapContentHeight()
             ) {
                 AddPaymentCardScreen(viewModel) {
-                    viewModel.onClickSaveCard()
-                    coroutineScope.launch {
-                        if (sheetState.isExpanded) {
-                            sheetState.collapse()
+                    viewModel.onClickSaveCard {
+                        coroutineScope.launch {
+                            if (sheetState.isExpanded) {
+                                sheetState.collapse()
+                            }
+                            else {
+                                sheetState.expand()
+                            }
                         }
-                        else {
-                            sheetState.expand()
-                        }
+                        toasty(context, context.getString(R.string.entries_saved))
                     }
-                    toasty(context, context.getString(R.string.entries_saved))
                 }
             }
         },

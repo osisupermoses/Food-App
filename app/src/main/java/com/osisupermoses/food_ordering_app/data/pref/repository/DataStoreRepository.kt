@@ -14,10 +14,9 @@ import javax.inject.Inject
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "on_boarding_pref")
 
-class DataStoreRepository @Inject constructor(context: Context) {
+class DataStoreRepository(context: Context) {
 
     private val dataStore = context.dataStore
-    private val applicationContext = context.applicationContext
 
     suspend fun saveOnBoardingState(completed: Boolean) {
         dataStore.edit { preferences ->
@@ -46,8 +45,7 @@ class DataStoreRepository @Inject constructor(context: Context) {
     }
 
     fun read(key: Preferences.Key<Boolean>): Flow<Resource<Boolean>> {
-        return dataStore.data
-            .map {
+        return dataStore.data.map {
                 Resource.Success(it[key] ?: false)
             }.catch {
                 Resource.Error<Exception>(message = Exception(it).message!!)
