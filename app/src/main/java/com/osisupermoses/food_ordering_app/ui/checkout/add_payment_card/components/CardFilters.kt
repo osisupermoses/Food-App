@@ -40,11 +40,11 @@ private val creditCardOffsetTranslator = object : OffsetMapping {
 }
 
 val CreditCardFilter = VisualTransformation { text ->
-    val trimmed = if (text.text.length >= 16) text.text.substring(0..15) else text.text
+    val trimmed = if (text.text.length >= 18) text.text.substring(0..17) else text.text
     var out = ""
     for (i in trimmed.indices) {
         out += trimmed[i]
-        if (i % 4 == 3 && i != 15) out += " "
+        if (i % 4 == 3 && i != 17) out += " "
     }
     TransformedText(AnnotatedString(out), creditCardOffsetTranslator)
 }

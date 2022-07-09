@@ -88,8 +88,6 @@ class AuthRepositoryImpl(
             emit(Resource.Success(data = data))
         } catch (e: IOException) {
             emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
-//        } catch (e: FirebaseException) {
-//            emit(Resource.Error(message = e.message!!))
         } catch (e: Exception) {
             emit(Resource.Error(message = e.message ?: "Unknown Error"))
         }

@@ -21,6 +21,12 @@ val SuccessColor = Color(0xff042E46)
 val ErrorColor = Color(0xffDD0A35)
 val InfoColor = Color(0xFF234F9D)
 
+val masterCardRed = Color(0xffEB001B)
+val masterCardYellow = Color(0xffF79E1B)
+val masterCardOrange = Color(0xffFF5F00)
+
+val visaCardColor = Color(0xff1A1F71)
+
 val darkPrimary = Color(0xff242316)
 
 val blue200 = Color(0xff91a4fc)

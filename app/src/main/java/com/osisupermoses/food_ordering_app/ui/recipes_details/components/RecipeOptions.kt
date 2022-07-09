@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.domain.model.RecipesItem
+import com.osisupermoses.food_ordering_app.ui.theme.ErrorColor
 
 @Composable
 fun RecipeOptions(
@@ -40,7 +41,7 @@ fun RecipeOptions(
                 modifier = Modifier.padding(end = 4.dp),
                 imageVector = Icons.Filled.Favorite,
                 contentDescription = null,
-                tint = MaterialTheme.colors.primary
+                tint = ErrorColor
             )
             Text(
                 text = "${recipe.aggregateLikes}",

@@ -22,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
@@ -76,7 +77,7 @@ fun RecipesHeader(
 
         Text(
             text = recipesItem.title ?: "",
-            style = MaterialTheme.typography.h4,
+            style = MaterialTheme.typography.h4.copy(fontSize = 36.sp),
             textAlign = TextAlign.Start,
             color = Color.White,
             modifier = Modifier

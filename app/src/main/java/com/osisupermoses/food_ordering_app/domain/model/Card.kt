@@ -21,9 +21,9 @@ data class Card(
     @get:PropertyName("card_issuer_icon")
     @set:PropertyName("card_issuer_icon")
     var cardIssuerIcon: Any? = R.drawable.mastercard_logo,
-    @get:PropertyName("card_last_four")
-    @set:PropertyName("card_last_four")
-    var cardLast4digits: String = "5532"
+    @get:PropertyName("card_number")
+    @set:PropertyName("card_number")
+    var cardNumber: String = "55321234123411234"
 )
 
 enum class CardType(
@@ -39,14 +39,14 @@ enum class CardType(
 fun getCards() = listOf(
     Card(
         cardIssuerIcon = R.drawable.mastercard_logo,
-        cardLast4digits = "2211"
+        cardNumber = "2211"
     ),
     Card(
         cardIssuerIcon = R.drawable.verve,
-        cardLast4digits = "9572"
+        cardNumber = "9572"
     ),
     Card(
-        cardIssuerIcon = R.drawable.visa,
-        cardLast4digits = "0043"
+        cardIssuerIcon = R.drawable.ic_visa_logo,
+        cardNumber = "0043"
     )
 )

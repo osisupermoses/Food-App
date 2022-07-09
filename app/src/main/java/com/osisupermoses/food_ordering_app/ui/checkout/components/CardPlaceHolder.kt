@@ -12,7 +12,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,16 +30,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.osisupermoses.food_ordering_app.R
+import com.osisupermoses.food_ordering_app.ui.theme.ErrorColor
 import com.osisupermoses.food_ordering_app.ui.theme.GoldYellow
 
 @Composable
-fun CardHolderItem(
+fun CardPlaceHolderItem(
     modifier: Modifier = Modifier,
     lastFourDigits: String,
     painter: Any?,
     selected: Boolean = false,
     borderColor: Color = GoldYellow,
     onClickCard: () -> Unit,
+    onDeleteClick: () -> Unit,
     onEditCardDetails: () -> Unit
 ) {
     Card(
@@ -63,7 +67,7 @@ fun CardHolderItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(5.dp))
                     .padding(start = 20.dp, top = 20.dp)
-                    .size(20.dp)
+                    .size(30.dp)
                     .align(Alignment.TopStart)
             )
             Box(modifier = Modifier
@@ -77,13 +81,23 @@ fun CardHolderItem(
             ) {
                 Icon(
                     imageVector = Icons.Outlined.Check,
-                    contentDescription = null,
+                    contentDescription = "Edit Card Icon",
                     tint = Color.Black,
                     modifier = Modifier
                         .padding(8.dp)
                         .size(20.dp)
                 )
             }
+            Icon(
+                imageVector = Icons.Filled.Delete,
+                contentDescription = "Edit Card Icon",
+                tint = ErrorColor,
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(6.dp)
+                    .size(25.dp)
+                    .clickable { onDeleteClick.invoke() }
+            )
             Text(
                 text = "**** **** **** $lastFourDigits",
                 style = MaterialTheme.typography.h4.copy(Color.Black),
@@ -105,7 +119,7 @@ fun AddNewCard(
             .size(180.dp, 120.dp)
             .border(
                 width = 2.dp,
-                color = Color.Black.copy(alpha = 0.2f),
+                color = Color.Black.copy(alpha = 0.1f),
                 shape = RoundedCornerShape(20.dp)
             )
             .clickable { onAddNewCardClick.invoke() },

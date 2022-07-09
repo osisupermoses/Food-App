@@ -4,13 +4,12 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
-import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.data.pref.PreferencesKeys
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
-import javax.inject.Inject
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "on_boarding_pref")
 
@@ -39,16 +38,13 @@ class DataStoreRepository(context: Context) {
     }
 
     suspend fun save(key: Preferences.Key<String>, value: String) {
-        dataStore.edit {
-            it[key] = value
+        dataStore.edit { preferences ->
+            preferences[key] = value
         }
     }
 
-    fun read(key: Preferences.Key<String>): Flow<Resource<String>> {
-        return dataStore.data.map {
-                Resource.Success(it[key])
-            }.catch {
-                Resource.Error<Exception>(message = Exception(it).message!!)
-            }
-    }
+    fun read(key: Preferences.Key<String>): Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[key] ?: ""
+        }
 }

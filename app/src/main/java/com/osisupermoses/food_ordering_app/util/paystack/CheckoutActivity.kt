@@ -40,35 +40,6 @@ class CheckoutActivity(private val context: Context) {
         )
     }
 
-//    private fun initializeFormVariables(
-//        mCardNumber: String,
-//        mCardExpiry: String,
-//        mCardCVV: String
-//    ) {
-////        // this is used to add a forward slash (/) between the cards expiry month
-////        // and year (11/21). After the month is entered, a forward slash is added
-////        // before the year
-////        mCardExpiry.editText!!.addTextChangedListener(object : TextWatcher {
-////            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-////
-////            }
-////
-////            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-////
-////            }
-////
-////            override fun afterTextChanged(s: Editable?) {
-////                if (s.toString().length == 2 && !s.toString().contains("/")) {
-////                    s!!.append("/")
-////                }
-////            }
-////
-////        })
-//
-////        val button = findViewById<Button>(R.id.btn_make_payment)
-//        button.setOnClickListener { performCharge() }
-//    }
-
     private fun performCharge(
         cardNumber: String,
         cardExpiry: String,
@@ -83,10 +54,7 @@ class CheckoutActivity(private val context: Context) {
         val cardExpiryArray = cardExpiry.split("/").toTypedArray()
         val expiryMonth = cardExpiryArray[0].toInt()
         val expiryYear = cardExpiryArray[1].toInt()
-//        var amount = intent.getIntExtra(getString(R.string.meal_name), 0)
-//        amount *= 100
         val amountInKobo = amount.toDouble() * 100
-
         val card = Card(cardNumber, expiryMonth, expiryYear, cvv)
 
         val charge = Charge()
@@ -96,7 +64,6 @@ class CheckoutActivity(private val context: Context) {
 
         PaystackSdk.chargeCard(activityContext as Activity, charge, object : Paystack.TransactionCallback {
             override fun onSuccess(transaction: Transaction) {
-//                parseResponse(transaction.reference)
                 onSuccess(transaction.reference)
             }
 

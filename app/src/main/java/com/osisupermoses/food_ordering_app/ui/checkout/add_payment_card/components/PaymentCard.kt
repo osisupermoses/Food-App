@@ -1,19 +1,3 @@
-/*
- * Copyright 2021 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components
 
 import androidx.compose.animation.AnimatedVisibility
@@ -35,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -42,8 +27,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import co.paystack.android.model.Card
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.domain.model.CardType
+import com.osisupermoses.food_ordering_app.ui.theme.*
 
 @ExperimentalAnimationApi
 @Composable
@@ -54,10 +41,25 @@ fun PaymentCard(
     cvcNumber: TextFieldValue
 ) {
     var backVisible by remember { mutableStateOf(false) }
-    var visaType by remember { mutableStateOf(CardType.None) }
-    val length = if (cardNumber.text.length > 16) 16 else cardNumber.text.length
-    val initial = remember { "*****************" }
-        .replaceRange(0..length, cardNumber.text.take(16))
+    var cardType by remember { mutableStateOf(CardType.None) }
+    val isVerveCard =
+        cardNumber.text.startsWith("1") ||
+                cardNumber.text.startsWith("2") ||
+                cardNumber.text.startsWith("3") ||
+                cardNumber.text.startsWith("5") ||
+                cardNumber.text.startsWith("6") ||
+                cardNumber.text.startsWith("7") ||
+                cardNumber.text.startsWith("8") ||
+                cardNumber.text.startsWith("9") ||
+                cardNumber.text.startsWith("0")
+
+    // Creating a Vertical Gradient Color For Mastercard colours
+    val masterCardGradient =
+        Brush.verticalGradient(
+            0f to masterCardRed,
+            0.5f to masterCardYellow,
+            1f to masterCardOrange
+        )
 
     if (cvcNumber.text.length == 1 && !backVisible) {
         backVisible = true
@@ -68,16 +70,36 @@ fun PaymentCard(
     }
 
     //Todo: handle card type logic.
-    visaType = if (cardNumber.text.length >= 8) {
+    cardType = if (cardNumber.text.startsWith("4")) {
         CardType.Visa
-    } else {
-        CardType.None
-    }
+    } else if (cardNumber.text.startsWith("5")) {
+        CardType.MasterCard
+    } else if (isVerveCard) {
+        CardType.Verve
+    } else CardType.None
 
+    // Setting textfield text length with card types
+    val length =
+        if (cardType == CardType.MasterCard || cardType == CardType.Visa) 16
+        else 18
+    val takeValue = if (cardType == CardType.Verve) 18 else 16
+    val initial =
+        if (cardType == CardType.MasterCard || cardType == CardType.Visa)
+            remember { "*****************" }
+                    .replaceRange(0..length, cardNumber.text.take(length))
+        else
+            remember { "*******************" }
+                .replaceRange(0..length, cardNumber.text.take(length))
+
+    // Displaying logo and color according to card type
     val animatedColor = animateColorAsState(
         targetValue =
-        if (visaType == CardType.Visa) {
-            Color(0xFF1C478B)
+        if (cardType == CardType.Visa) {
+            visaCardColor
+        } else if (cardType == CardType.MasterCard) {
+            masterCardOrange
+        } else if (cardType == CardType.Verve) {
+            ErrorColor
         } else {
             MaterialTheme.colors.onBackground
         }
@@ -113,14 +135,14 @@ fun PaymentCard(
                             }
                         )
 
-                        AnimatedVisibility(visible = visaType != CardType.None,
+                        AnimatedVisibility(visible = cardType != CardType.None,
                             modifier = Modifier.padding(20.dp).constrainAs(logo) {
                                 end.linkTo(parent.end)
                                 top.linkTo(parent.top)
                             }) {
                             Image(
                                 painter = painterResource(
-                                    id = visaType.image
+                                    id = cardType.image
                                 ),
                                 contentDescription = "symbol"
                             )

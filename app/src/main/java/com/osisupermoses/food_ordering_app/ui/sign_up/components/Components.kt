@@ -213,8 +213,6 @@ fun CountryCodePickerDialog(
 @Composable
 fun TextField(
     modifier: Modifier = Modifier,
-    isAddress: Boolean = false,
-    addTextTile: Boolean = true,
     value: String,
     enabled: Boolean = true,
     readOnly: Boolean = false,
@@ -230,29 +228,27 @@ fun TextField(
 ) {
     val passwordFocusRequest = FocusRequester.Default
     Column {
-        if(addTextTile) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = MaterialTheme.spacing.small),
-                verticalAlignment = CenterVertically
-            ) {
-                if (icon != null) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = "Icon",
-                        tint = Color(0xff696F79),
-                        modifier = Modifier.padding(
-                            end = MaterialTheme.spacing.small
-                        )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = MaterialTheme.spacing.small),
+            verticalAlignment = CenterVertically
+        ) {
+            if (icon != null) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = "Icon",
+                    tint = Color(0xff696F79),
+                    modifier = Modifier.padding(
+                        end = MaterialTheme.spacing.small
                     )
-                }
-                Text(
-                    text = text,
-                    style = MaterialTheme.typography.h5,
-                    color = Color(0xffAAAAAA)
                 )
             }
+            Text(
+                text = text,
+                style = MaterialTheme.typography.h5,
+                color = Color(0xffAAAAAA)
+            )
         }
         OutlinedTextField(
             value = value,
@@ -280,7 +276,9 @@ fun TextField(
                 focusedIndicatorColor = Color(0xffDD0A35),
                 disabledIndicatorColor = Color.Transparent
             ),
-            keyboardActions = KeyboardActions { passwordFocusRequest.requestFocus() },
+            keyboardActions = KeyboardActions {
+                passwordFocusRequest.requestFocus()
+            },
             placeholder = {
                 Text(
                     text = placeholderText,
@@ -288,25 +286,6 @@ fun TextField(
                     textAlign = TextAlign.Start,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
-            },
-            trailingIcon = {
-                if (!isAddress) Unit
-                else Box(modifier = Modifier
-                    .wrapContentSize()
-                    .background(
-                        color = GoldYellow,
-                        shape = CircleShape
-                    )
-                ) {
-                    if (!enabled || enabled)
-                    Icon(
-                        imageVector = Icons.Rounded.Edit,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(5.dp)
-                            .clickable { onEditAddressClick.invoke() }
-                    )
-                }
             }
         )
     }

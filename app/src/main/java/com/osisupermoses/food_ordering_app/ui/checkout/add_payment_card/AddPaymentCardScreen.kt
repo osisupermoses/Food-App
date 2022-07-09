@@ -17,6 +17,7 @@
 package com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card
 
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
@@ -26,16 +27,19 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.osisupermoses.food_ordering_app.R
+import com.osisupermoses.food_ordering_app.domain.model.CardType
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.CreditCardFilter
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.InputItem
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.PaymentCard
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutViewModel
 import com.osisupermoses.food_ordering_app.ui.theme.GoldYellow
+import com.osisupermoses.food_ordering_app.ui.theme.masterCardOrange
+import com.osisupermoses.food_ordering_app.ui.theme.visaCardColor
 
 @ExperimentalAnimationApi
 @Composable
@@ -45,7 +49,7 @@ fun AddPaymentCardScreen(
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         PaymentCard(
-            viewModel.nameText,
+            viewModel.cardHolderName,
             viewModel.cardNumber,
             viewModel.expiryNumber,
             viewModel.cvcNumber
@@ -57,9 +61,9 @@ fun AddPaymentCardScreen(
         ) {
             item {
                 InputItem(
-                    textFieldValue = viewModel.nameText,
+                    textFieldValue = viewModel.cardHolderName,
                     label = stringResource(id = R.string.card_holder_name),
-                    onTextChanged = { viewModel.nameText = it },
+                    onTextChanged = { viewModel.cardHolderName = it },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp)
@@ -72,6 +76,7 @@ fun AddPaymentCardScreen(
                     label = stringResource(id = R.string.card_holder_number),
                     keyboardType = KeyboardType.Number,
                     onTextChanged = {
+                        if (it.text.count() <= 18)
                         viewModel.cardNumber = it
                     },
                     modifier = Modifier
@@ -114,7 +119,6 @@ fun AddPaymentCardScreen(
                     )
                 }
             }
-
             item {
                 Button(
                     onClick = { toCheckout.invoke() },

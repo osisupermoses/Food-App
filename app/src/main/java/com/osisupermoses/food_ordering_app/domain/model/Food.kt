@@ -23,7 +23,7 @@ fun getFoods(): List<Food> =
         Food(
             id = 1,
             name = "Dominos Pizza",
-            price = 900.00,
+            price = 2500.00,
             image = R.drawable.dominos_pizza,
             orderRating = 4.5,
             foodCategory = "Snacks"
@@ -31,7 +31,7 @@ fun getFoods(): List<Food> =
         Food(
             id = 2,
             name = "Dough",
-            price = 300.56,
+            price = 1200.00,
             image = R.drawable.dough_,
             orderRating = 4.2,
             foodCategory = "Snacks"
@@ -39,7 +39,7 @@ fun getFoods(): List<Food> =
         Food(
             id = 3,
             name = "TechieHub Pizza",
-            price = 500.00,
+            price = 1000.00,
             image = R.drawable.pizza2,
             orderRating = 4.0,
             foodCategory = "Snacks"

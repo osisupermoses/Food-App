@@ -1,8 +1,5 @@
 package com.osisupermoses.food_ordering_app.ui.checkout
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,14 +10,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.osisupermoses.food_ordering_app.R
-import com.osisupermoses.food_ordering_app.domain.model.getCards
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.AddPaymentCardScreen
 import com.osisupermoses.food_ordering_app.ui.checkout.components.*
 import com.osisupermoses.food_ordering_app.ui.theme.spacing
@@ -31,7 +30,9 @@ import com.osisupermoses.food_ordering_app.util.toasty
 import com.osisupermoses.trustsoft_fintech_compose.util.ui_utils.dialogs.awesome_custom_dalog.AwesomeCustomDialogType
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun CheckoutScreen(
     viewModel: CheckoutViewModel = hiltViewModel(),
@@ -46,6 +47,7 @@ fun CheckoutScreen(
         bottomSheetState = sheetState
     )
     val context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(key1 = true) {
         viewModel.errorChannel.collect { error ->
@@ -116,11 +118,12 @@ fun CheckoutScreen(
                         onAddressValueChange = { viewModel.address = it },
                         saveBtnVisibility = viewModel.saveBtnVisibility,
                         addTextTile = viewModel.saveBtnVisibility,
-                        onEditAddressClick = { address ->
-                            viewModel.onEditAddressClick(address)
+                        onEditAddressClick = { addressTextField ->
+                            viewModel.onEditAddressClick(addressTextField)
                         },
-                        onSaveClick = { address ->
-                            viewModel.onSaveAddressClick(address)
+                        onSaveClick = { addressTextField ->
+                            keyboardController?.hide()
+                            viewModel.onSaveAddressClick(addressTextField)
                         }
                     )
                 }
@@ -139,15 +142,23 @@ fun CheckoutScreen(
                     LazyRow {
                         item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
                         viewModel.state.value.cardList?.let {
-                            itemsIndexed(it.toList()) { index, cardholder ->
-                                CardHolderItem(
-                                    lastFourDigits = cardholder.cardLast4digits,
-                                    painter = cardholder.cardIssuerIcon,
+                            itemsIndexed(it.toList()) { index, card ->
+                                CardPlaceHolderItem(
+                                    lastFourDigits = card.cardNumber.takeLast(4),
+                                    painter =
+                                        if (card.cardNumber.startsWith("4")) R.drawable.ic_visa_logo
+                                        else if(card.cardNumber.startsWith("5")) R.drawable.mastercard_logo
+                                        else R.drawable.verve,
                                     selected = viewModel.selectedCardHolderIndex == index,
                                     onClickCard = {
                                         viewModel.selectedCardHolderIndex = index
+                                        viewModel.onPickCard(card)
+                                    },
+                                    onDeleteClick = {
+                                        card.id?.let { it1 -> viewModel.onDeleteCard(it1) }
                                     }
                                 ) {
+                                    viewModel.onPickCard(card)
                                     coroutineScope.launch {
                                         if (sheetState.isExpanded) {
                                             sheetState.collapse()
@@ -195,7 +206,10 @@ fun CheckoutScreen(
                             .padding(horizontal = 30.dp),
                         totalAmt = "${viewModel.currencySymbol}${viewModel.total}"
                     ) {
-                        if (viewModel.selectedCardHolderIndex != null && viewModel.address.isNotBlank()) {
+                        if (
+                            viewModel.selectedCardHolderIndex != null &&
+                            viewModel.address.text.isNotBlank()
+                        ) {
                             viewModel.makePayment(
                                 context = context,
                                 successScreen = {
@@ -205,7 +219,7 @@ fun CheckoutScreen(
                                     viewModel.errorDialogIsVisible = true
                                 }
                             )
-                        } else if (viewModel.address.isBlank()) {
+                        } else if (viewModel.address.text.isBlank()) {
                             toasty(
                                 context,
                                 context.getString(R.string.address_field_cannot_be_blank)

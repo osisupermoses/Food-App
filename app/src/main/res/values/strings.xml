@@ -85,4 +85,7 @@
     <string name="please_enter_a_valid_expiry_date">Please enter a valid expiry number</string>
     <string name="please_enter_a_valid_cvv_date">Please enter a valid CVV number</string>
     <string name="please_enter_a_valid_card_num">Please enter a valid card number</string>
+    <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s)</string>
+    <string name="card_was_successfully_deleted">Card was successfully deleted</string>
+    <string name="couldnot_delete_card">Could not delete card. Check your internet connection and retry.</string>
 </resources>

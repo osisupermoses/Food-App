@@ -16,13 +16,12 @@ import com.osisupermoses.food_ordering_app.ui.onboarding.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@OptIn(ExperimentalAnimationApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var splashViewModel: SplashViewModel
-//    private val mainViewModel by viewModels<SplashScreen>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
