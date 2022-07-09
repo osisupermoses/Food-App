@@ -38,15 +38,15 @@ class DataStoreRepository(context: Context) {
             }
     }
 
-    suspend fun save(key: Preferences.Key<Boolean>, value: Boolean) {
+    suspend fun save(key: Preferences.Key<String>, value: String) {
         dataStore.edit {
             it[key] = value
         }
     }
 
-    fun read(key: Preferences.Key<Boolean>): Flow<Resource<Boolean>> {
+    fun read(key: Preferences.Key<String>): Flow<Resource<String>> {
         return dataStore.data.map {
-                Resource.Success(it[key] ?: false)
+                Resource.Success(it[key])
             }.catch {
                 Resource.Error<Exception>(message = Exception(it).message!!)
             }

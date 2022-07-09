@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
@@ -15,11 +16,13 @@ import com.google.firebase.ktx.Firebase
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
+import com.osisupermoses.food_ordering_app.data.pref.PreferencesKeys
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
 import com.osisupermoses.food_ordering_app.domain.model.Card
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.util.UiText
 import com.osisupermoses.food_ordering_app.util.paystack.CheckoutActivity
+import com.osisupermoses.food_ordering_app.util.toasty
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
@@ -39,12 +42,19 @@ class CheckoutViewModel @Inject constructor(
 
     val TAG = "CHECKOUTVIEWMODEL"
 
+    val state = mutableStateOf(CheckoutScreenState())
     var selectedCardHolderIndex by mutableStateOf<Int?>(null)
     var cardNumber by mutableStateOf(TextFieldValue())
     var address by mutableStateOf("")
-    val state = mutableStateOf(CheckoutScreenState())
 
-    val firebaseAuth = Firebase.auth
+    var saveBtnVisibility by mutableStateOf(true)
+    var enabled by mutableStateOf(true)
+    var readOnly by mutableStateOf(false)
+    var topText by mutableStateOf(R.string.input_a_valid_address_below)
+    var successDialogIsVisible by mutableStateOf(false)
+    var errorDialogIsVisible by mutableStateOf(false)
+
+    private val firebaseAuth = Firebase.auth
 
     var nameText by mutableStateOf(TextFieldValue())
     var expiryNumber by mutableStateOf(TextFieldValue())
@@ -63,6 +73,7 @@ class CheckoutViewModel @Inject constructor(
     init {
         paystackCheckout.initializePaystack()
         getCardsFromFirestore()
+        getAddress()
     }
 
     fun makePayment(
@@ -236,6 +247,44 @@ class CheckoutViewModel @Inject constructor(
                 .addOnFailureListener {
                     Log.w("Error", "Error updating document", it)
                 }
+        }
+    }
+
+    private fun getAddress() {
+        viewModelScope.launch {
+            dataStoreRepository.read(PreferencesKeys.addressKey).onEach { response ->
+                when(response) {
+                    is Resource.Success -> address = response.data.toString()
+                    else -> {
+                        Log.e(TAG, "ERROR SAVING ADDRESS: ${response.message}")
+                        state.value = CheckoutScreenState(error = response.message)
+                        _errorChannel.send(UiText.DynamicString(response.message.toString()))
+                    }
+                }
+            }
+        }
+    }
+
+    fun onSaveAddressClick(value: String) {
+        viewModelScope.launch {
+            if (value.isNotBlank()) {
+                dataStoreRepository.save(PreferencesKeys.addressKey, address)
+                _errorChannel.send(UiText.StringResource(R.string.address_saved))
+                saveBtnVisibility = false
+                readOnly = true
+                enabled = false
+                address = value
+            } else _errorChannel.send(UiText.StringResource(R.string.please_input_an_address))
+        }
+    }
+
+    fun onEditAddressClick(value: String) {
+        if (value.isNotBlank()) {
+            topText = R.string.you_can_edit
+            readOnly = false
+            enabled = true
+            address = value
+            saveBtnVisibility = true
         }
     }
 }

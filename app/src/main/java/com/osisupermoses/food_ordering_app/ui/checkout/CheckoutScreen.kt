@@ -46,12 +46,6 @@ fun CheckoutScreen(
         bottomSheetState = sheetState
     )
     val context = LocalContext.current
-    var saveBtnVisibility by remember { mutableStateOf(true) }
-    var enabled by remember { mutableStateOf(true) }
-    var readOnly by remember { mutableStateOf(false) }
-    var topText by remember { mutableStateOf(R.string.input_a_valid_address_below) }
-    var successDialogIsVisible by remember { mutableStateOf(false) }
-    var errorDialogIsVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.errorChannel.collect { error ->
@@ -116,32 +110,17 @@ fun CheckoutScreen(
                             .padding(horizontal = MaterialTheme.spacing.medium)
                             .fillMaxWidth(),
                         address = viewModel.address,
-                        enabled = enabled,
-                        readOnly = readOnly,
-                        topText = stringResource(topText),
+                        enabled = viewModel.enabled,
+                        readOnly = viewModel.readOnly,
+                        topText = stringResource(viewModel.topText),
                         onAddressValueChange = { viewModel.address = it },
-                        saveBtnVisibility = saveBtnVisibility,
-                        addTextTile = saveBtnVisibility,
-                        onEditAddressClick = {
-                            if (it.isNotBlank()) {
-                                topText = R.string.you_can_edit
-                                readOnly = false
-                                enabled = true
-                                viewModel.address = it
-                                saveBtnVisibility = true
-                            }
+                        saveBtnVisibility = viewModel.saveBtnVisibility,
+                        addTextTile = viewModel.saveBtnVisibility,
+                        onEditAddressClick = { address ->
+                            viewModel.onEditAddressClick(address)
                         },
-                        onSaveClick = {
-                            if (it.isNotBlank()) {
-                                toasty(context, context.getString(R.string.address_saved))
-                                saveBtnVisibility = false
-                                readOnly = true
-                                enabled = false
-                                viewModel.address = it
-                            } else toasty(
-                                context,
-                                context.getString(R.string.please_input_an_address)
-                            )
+                        onSaveClick = { address ->
+                            viewModel.onSaveAddressClick(address)
                         }
                     )
                 }
@@ -220,10 +199,10 @@ fun CheckoutScreen(
                             viewModel.makePayment(
                                 context = context,
                                 successScreen = {
-                                    successDialogIsVisible = true
+                                    viewModel.successDialogIsVisible = true
                                 },
                                 failedScreen = {
-                                    errorDialogIsVisible = true
+                                    viewModel.errorDialogIsVisible = true
                                 }
                             )
                         } else if (viewModel.address.isBlank()) {
@@ -239,7 +218,7 @@ fun CheckoutScreen(
                 }
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraLarge)) }
             }
-            if (successDialogIsVisible) {
+            if (viewModel.successDialogIsVisible) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -249,12 +228,12 @@ fun CheckoutScreen(
                         title = stringResource(R.string.payment_successful),
                         desc = "TRANSACTION REFERENCE:" + viewModel.state.value.transReference,
                         onDismiss = {
-                            successDialogIsVisible = false
+                            viewModel.successDialogIsVisible = false
                         }
                     )
                 }
             }
-            if (errorDialogIsVisible) {
+            if (viewModel.errorDialogIsVisible) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -265,11 +244,11 @@ fun CheckoutScreen(
                         desc = ("REASON: " + viewModel.state.value.error),
                         twoOptionsNeeded = true,
                         onDismiss = {
-                            errorDialogIsVisible = false
+                            viewModel.errorDialogIsVisible = false
                         },
                         onRetry = {
                             viewModel.makePayment(context = context)
-                            errorDialogIsVisible = false
+                            viewModel.errorDialogIsVisible = false
                         }
                     )
                 }
