@@ -7,7 +7,8 @@ devices using tools like:
 
 * Firebase Firestore - Authentication and cloud storage
 
-* Paystack SDK - For making payment, 
+* Paystack SDK - For making payment
+ 
 * Architecture used - Clean Architecture 
 
 This project is still ongoing and open for your contributions.
