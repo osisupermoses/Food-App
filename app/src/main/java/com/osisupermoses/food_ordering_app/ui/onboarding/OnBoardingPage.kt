@@ -10,18 +10,18 @@ sealed class OnBoardingPage(
     val description: Int
 ) {
     object First: OnBoardingPage(
-        icon = null,
+        icon = R.mipmap.on_boarding_icon_foreground,
         image = R.drawable.onboardingscreen,
         description = R.string.order
     )
     object Second: OnBoardingPage(
-        icon = null,
-        image = R.drawable.onboardingscreen2,
+        icon = R.mipmap.on_boarding_icon_foreground,
+        image = R.drawable.swift_delivery,
         description = R.string.deliver
     )
     object Third: OnBoardingPage(
-        icon = null,
-        image = R.drawable.onboardingscreen3,
+        icon = R.mipmap.on_boarding_icon_foreground,
+        image = R.drawable.eat_and_enjoy,
         description = R.string.eat
     )
 }

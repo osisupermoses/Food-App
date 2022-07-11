@@ -28,7 +28,7 @@ data class Card(
 
 enum class CardType(
     val title: String,
-    @DrawableRes val image: Int,
+    @DrawableRes val image: Int
 ) {
     None("", R.drawable.ic_visa_logo),
     Visa("visa", R.drawable.ic_visa_logo),

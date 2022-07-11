@@ -34,6 +34,7 @@ internal fun SetUpNavGraphNoBottomBar(
     ) {
         composable(Screens.NoBottomBarScreens.WelcomeScreen.route) {
             WelcomeScreen {
+                navController.popBackStack()
                 navController.navigate(Screens.NoBottomBarScreens.NewOrExistingScreen.route)
             }
         }
@@ -54,6 +55,9 @@ internal fun SetUpNavGraphNoBottomBar(
         }
         composable(Screens.NoBottomBarScreens.LogInScreen.route) {
             LoginScreen(
+                toNewOrExistingScreen = {
+                    navController.navigate(Screens.NoBottomBarScreens.NewOrExistingScreen.route)
+                },
                 toForgottenPasswordScreen = {  },
                 toMenuScreen = {
                     navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route)
@@ -70,7 +74,10 @@ internal fun SetUpNavGraphNoBottomBar(
 //                    navController.navigate(Screens.NoBottomBarScreens.RecipesDetailsScreen.route
 ////                    + "/{restaurantId}"
 //                    )
-                }
+                },
+                toMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) },
+                toAdminScreen = {  },
+                toLogInScreen = { navController.navigate(Screens.NoBottomBarScreens.LogInScreen.route) }
             )
         }
         composable(
@@ -97,7 +104,10 @@ internal fun SetUpNavGraphNoBottomBar(
                 navArgument(Constants.DELIVERY_FEE) { type = NavType.StringType},
             )
         ) {
-            CheckoutScreen { navController.navigateUp() }
+            CheckoutScreen (
+                navigateUp = { navController.navigateUp() },
+                goToMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) }
+            )
         }
     }
 }

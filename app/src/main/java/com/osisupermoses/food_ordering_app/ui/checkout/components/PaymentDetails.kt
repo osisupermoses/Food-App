@@ -96,7 +96,7 @@ fun PaymentDetails(
                 )
             )
             Text(
-                text = itemPrice,
+                text = totalAmount,
                 style = MaterialTheme.typography.h5.copy(
                     fontWeight = FontWeight.Bold,
                     color = Color.Black

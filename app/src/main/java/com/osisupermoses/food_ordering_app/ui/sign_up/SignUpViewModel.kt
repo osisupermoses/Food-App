@@ -77,7 +77,7 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun register(nextScreen: () -> Unit) {
+    private fun register(nextScreen: () -> Unit) {
         viewModelScope.launch {
             repository.register(userEmail.value, password.value).collect { result ->
                 when(result) {
@@ -130,6 +130,9 @@ class SignUpViewModel @Inject constructor(
                 }
                 _phoneNumber.value.length == 11 && !_phoneNumber.value.startsWith("0") -> {
                     _errorChannel.send(UiText.StringResource(R.string.invalid_phone_number_please))
+                }
+                _password.value.length < 6 -> {
+                    _errorChannel.send(UiText.StringResource(R.string.password_cannot_be_less_than_6_digits))
                 }
                 _phoneNumber.value.length == 11 && _phoneNumber.value.startsWith("0") -> {
                     val trimedPhoneNum = _phoneNumber.value.removePrefix("0")

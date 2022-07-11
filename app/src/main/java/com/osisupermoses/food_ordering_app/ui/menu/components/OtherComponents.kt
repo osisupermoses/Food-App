@@ -33,51 +33,6 @@ import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.ui.theme.spacing
 
 @Composable
-fun MenuTopBar(
-    modifier: Modifier = Modifier,
-    topIcon: Painter?,
-    storeAddress: String,
-    onSearchClick: () -> Unit,
-    onDrawerClick: () -> Unit
-) {
-
-    Box(
-        modifier = Modifier
-            .padding(MaterialTheme.spacing.medium)
-            .fillMaxWidth()
-            .wrapContentHeight()
-    ) {
-        if (topIcon != null) {
-            Image(
-                painter = topIcon,
-                contentDescription = "DrawerIcon",
-                modifier = modifier
-                    .size(30.dp)
-                    .align(Alignment.CenterStart)
-                    .clickable { onDrawerClick.invoke() }
-            )
-        }
-        Text(
-            text = storeAddress,
-            style = MaterialTheme.typography.h6.copy(
-                color = Color.LightGray
-            ),
-            modifier = Modifier.align(Center)
-        )
-        Icon(
-            imageVector = Icons.Rounded.Search,
-            tint = Color.White,
-            contentDescription = "Search Icon",
-            modifier = Modifier
-                .size(25.dp)
-                .align(Alignment.CenterEnd)
-                .clickable { onSearchClick.invoke() }
-
-        )
-    }
-}
-
-@Composable
 fun Header(
     menuTitle: String
 ) {

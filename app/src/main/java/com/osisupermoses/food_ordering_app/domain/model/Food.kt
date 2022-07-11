@@ -12,9 +12,6 @@ data class Food(
     val isFavourite: Boolean = false,
     val foodCategory: String,
     val estDeliveryTime: String = "45 - 120",
-    val totalStock: Long = 20,
-    val quantityPurchased: Long = 2,
-    val quantityInStock: Long = totalStock - quantityPurchased,
     val restaurantId: Long? = null,
 )
 

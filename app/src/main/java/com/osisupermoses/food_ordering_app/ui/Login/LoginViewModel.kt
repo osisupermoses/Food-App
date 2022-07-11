@@ -16,7 +16,6 @@ import com.google.firebase.ktx.Firebase
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
-import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
 import com.osisupermoses.food_ordering_app.domain.model.User
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.util.UiText
@@ -125,7 +124,7 @@ class LoginViewModel @Inject constructor(
                             data = result.data == true
                         )
                         if (result.data == true) {
-                            saveLoggedinInUserIntoFirestore { nextScreen.invoke() }
+                            saveAuthenticatedUserIntoFirestore { nextScreen.invoke() }
                         }
                     }
                     is Resource.Error -> {
@@ -173,38 +172,7 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-
-    fun logOut(nextScreen: () -> Unit) {
-        viewModelScope.launch {
-            repository.logOut().collect { result ->
-                when(result) {
-                    is Resource.Loading -> {
-                        _state.value = state.value.copy(isLoading = true)
-                    }
-                    is Resource.Success -> {
-                        _state.value = state.value.copy(
-                            isLoading = false,
-                            data = result.data == true
-                        )
-                        if (result.data == true) {
-                            nextScreen()
-                        }
-                    }
-                    is Resource.Error -> {
-                        _state.value = state.value.copy(
-                            isLoading = false,
-                            error = result.message.toString()
-                        )
-                        _errorChannel.send(UiText.DynamicString(
-                            result.message ?: "Something went wrong")
-                        )
-                    }
-                }
-            }
-        }
-    }
-
-    private fun saveLoggedinInUserIntoFirestore(nextScreen: () -> Unit) {
+    private fun saveAuthenticatedUserIntoFirestore(nextScreen: () -> Unit) {
         viewModelScope.launch {
             repository.getUserInfoFromFirestore().onEach { result ->
                 when(result) {
@@ -233,18 +201,18 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun createUser(nextScreen: () -> Unit) {
-        val userInfo = getCurrentUser()
-        val user = userInfo?.let {
+        val currentUser = getCurrentUser()
+        val user = currentUser?.let {
             User(
-                userId = userInfo.uid,
-                fullName = userInfo.displayName!!,
-                email = userInfo.email!!
+                userId = currentUser.uid,
+                fullName = currentUser.displayName!!,
+                email = currentUser.email!!
             )
         }
-        saveToFirebase(user!!, nextScreen)
+        saveUserToFirebase(user!!, nextScreen)
     }
 
-    private fun saveToFirebase(user: User, nextScreen: () -> Unit) {
+    private fun saveUserToFirebase(user: User, nextScreen: () -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val dbCollection = db.collection(Constants.DB_Collection)
 

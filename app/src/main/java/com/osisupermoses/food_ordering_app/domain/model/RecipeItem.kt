@@ -19,7 +19,7 @@ data class RecipesItem(
     val vegetarian: Boolean? = null,
     val foodCategory: String = "Sncaks",
     val totalStock: Long = 20,
-    val quantityPurchased: Long = 2,
+    val quantityPurchased: Long = 0,
     val quantityInStock: Long = totalStock - quantityPurchased,
     val restaurantId: Long? = null,
     val image: Any? = null,

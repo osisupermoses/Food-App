@@ -21,7 +21,7 @@ interface AuthRepository {
 
     suspend fun getCardInfoFromFirestore(): Flow<Resource<List<Card>>>
 
-    suspend fun logOut(): Flow<Resource<Boolean>>
+    suspend fun deleteUserAccount(): Flow<Resource<Boolean>>
 
     fun getFirebaseAuthState(): Flow<Boolean>
 }

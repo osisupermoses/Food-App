@@ -5,7 +5,7 @@ data class User(
     val userId: String = "",
     val fullName: String = "",
     val email: String = "",
-    val isAdmin: Boolean = false,
+    val isSellerAccount: String = "No",
     val phoneNumber: String = "",
     val profilePhoto: String = "",
     val userReview: String = ""

@@ -3,6 +3,7 @@ package com.osisupermoses.food_ordering_app.ui.Login
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -34,11 +35,13 @@ import com.osisupermoses.food_ordering_app.ui.Login.components.LoginTopBar
 import com.osisupermoses.food_ordering_app.ui.sign_up.components.EmailInput
 import com.osisupermoses.food_ordering_app.ui.sign_up.components.PasswordInput
 import com.osisupermoses.food_ordering_app.util.loading.CustomCircularProgressIndicator
+import kotlinx.coroutines.launch
 
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
+    toNewOrExistingScreen: () -> Unit,
     toForgottenPasswordScreen: () -> Unit,
     toMenuScreen: () -> Unit
 ) {
@@ -48,6 +51,10 @@ fun LoginScreen(
     val switchedState = loginViewModel.switchChanged
     val context = LocalContext.current
     val scaffoldState = rememberScaffoldState()
+
+    BackHandler {
+        toNewOrExistingScreen.invoke()
+    }
 
     LaunchedEffect(key1 = scaffoldState) {
         loginViewModel.errorChannel.collect { error ->

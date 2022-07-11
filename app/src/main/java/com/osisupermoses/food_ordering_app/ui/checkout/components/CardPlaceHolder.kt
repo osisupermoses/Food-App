@@ -1,9 +1,6 @@
 package com.osisupermoses.food_ordering_app.ui.checkout.components
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +23,7 @@ import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role.Companion.Image
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
@@ -61,7 +59,7 @@ fun CardPlaceHolderItem(
                 .fillMaxSize()
                 .background( Color.White /*GoldYellow.copy(alpha = 0.05f)*/)
         ) {
-            Icon(
+            Image(
                 painter = rememberAsyncImagePainter(model = painter),
                 contentDescription = null,
                 modifier = Modifier

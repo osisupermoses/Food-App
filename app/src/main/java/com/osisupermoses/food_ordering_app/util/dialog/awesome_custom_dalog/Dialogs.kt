@@ -35,10 +35,10 @@ import com.osisupermoses.trustsoft_fintech_compose.util.ui_utils.dialogs.awesome
 fun SuccessDialog(
     title: String,
     desc: String,
-    onDismiss: () -> Unit
+    onOkayClick: () -> Unit
 ) {
     Dialog(
-        onDismissRequest = onDismiss
+        onDismissRequest = onOkayClick
     ) {
         Box(
             modifier = Modifier
@@ -83,38 +83,20 @@ fun SuccessDialog(
                             )
                         )
                         Spacer(modifier = Modifier.height(24.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
+                        Button(
+                            onClick = onOkayClick,
+                            shape = Shapes.large,
+                            colors = ButtonDefaults.buttonColors(backgroundColor = SuccessColor),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .clip(RoundedCornerShape(5.dp))
+                                .clickable { onOkayClick.invoke() }
                         ) {
-                            Button(
-                                onClick = onDismiss,
-                                shape = Shapes.large,
-                                colors = ButtonDefaults.buttonColors(backgroundColor = ErrorColor),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(5.dp))
-                            ) {
-                                Text(
-                                    text = "Cancel",
-                                    color = Color.White
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Button(
-                                onClick = onDismiss,
-                                shape = Shapes.large,
-                                colors = ButtonDefaults.buttonColors(backgroundColor = SuccessColor),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f)
-                                    .clip(RoundedCornerShape(5.dp))
-                            ) {
-                                Text(
-                                    text = "Ok",
-                                    color = Color.White
-                                )
-                            }
+                            Text(
+                                text = "Ok",
+                                color = Color.White
+                            )
                         }
                     }
                 }
@@ -337,7 +319,7 @@ fun AwesomeCustomDialog(
     title: String,
     desc: String,
     twoOptionsNeeded: Boolean = false,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit = {},
     onRetry: () -> Unit = {},
     onOkayClick: () -> Unit = {},
 ) {
@@ -347,7 +329,7 @@ fun AwesomeCustomDialog(
                 SuccessDialog(
                     title = title,
                     desc = desc,
-                    onDismiss = onDismiss
+                    onOkayClick = onOkayClick
                 )
             }
             AwesomeCustomDialogType.ERROR -> {

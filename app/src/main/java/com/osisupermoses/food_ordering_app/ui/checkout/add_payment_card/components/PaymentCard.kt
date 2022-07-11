@@ -97,7 +97,7 @@ fun PaymentCard(
         if (cardType == CardType.Visa) {
             visaCardColor
         } else if (cardType == CardType.MasterCard) {
-            masterCardOrange
+            masterCardYellow
         } else if (cardType == CardType.Verve) {
             ErrorColor
         } else {
@@ -144,7 +144,8 @@ fun PaymentCard(
                                 painter = painterResource(
                                     id = cardType.image
                                 ),
-                                contentDescription = "symbol"
+                                contentDescription = "symbol",
+                                modifier = Modifier.size(40.dp)
                             )
                         }
 

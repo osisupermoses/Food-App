@@ -60,7 +60,7 @@ fun Address(
             readOnly = readOnly,
             addTextTile = addTextTile,
             text = topText,
-            onEditAddressClick = { onAddressValueChange(address) }
+            onEditAddressClick = { onEditAddressClick(address) }
         ) {
             onAddressValueChange.invoke(it)
         }

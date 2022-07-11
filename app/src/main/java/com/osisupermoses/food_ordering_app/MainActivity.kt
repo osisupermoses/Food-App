@@ -1,12 +1,16 @@
 package com.osisupermoses.food_ordering_app
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.runtime.getValue
+import androidx.compose.material.rememberScaffoldState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
@@ -14,6 +18,7 @@ import com.osisupermoses.food_ordering_app.ui.theme.Food_Ordering_AppTheme
 import com.osisupermoses.food_ordering_app.navigation.SetUpNavGraphNoBottomBar
 import com.osisupermoses.food_ordering_app.ui.onboarding.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @OptIn(ExperimentalLayoutApi::class)

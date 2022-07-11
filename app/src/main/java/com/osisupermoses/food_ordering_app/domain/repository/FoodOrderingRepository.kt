@@ -9,9 +9,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface FoodOrderingRepository {
 
-    fun getFoodList(): Flow<Resource<List<Food>>>
+    fun getFoodList(): Resource<List<Food>>
 
-    fun getRestaurantList(): Flow<Resource<List<Restaurant>>>
+    fun getRestaurantList(): Resource<List<Restaurant>>
 
     fun getRecipeDetails(id: Int): Resource<RecipesItem>
 }

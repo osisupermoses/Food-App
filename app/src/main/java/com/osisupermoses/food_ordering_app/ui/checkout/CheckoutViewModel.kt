@@ -44,9 +44,9 @@ class CheckoutViewModel @Inject constructor(
     var cardNumber by mutableStateOf(TextFieldValue())
     var address by mutableStateOf(TextFieldValue())
 
-    var saveBtnVisibility by mutableStateOf(true)
-    var enabled by mutableStateOf(true)
-    var readOnly by mutableStateOf(false)
+    var saveBtnVisibility by mutableStateOf(false)
+    var enabled by mutableStateOf(false)
+    var readOnly by mutableStateOf(true)
     var topText by mutableStateOf(R.string.input_a_valid_address_below)
     var successDialogIsVisible by mutableStateOf(false)
     var errorDialogIsVisible by mutableStateOf(false)
@@ -74,7 +74,7 @@ class CheckoutViewModel @Inject constructor(
     }
 
     // SEND CARD DETAILS TO PAYSTACK AND RETURNS RESPONSES IN FORM OF STRING
-    fun makePayment(
+    fun onCheckoutClick(
         cardNumber: String = "4084084084084081",
         cardExpiry: String = "07/23",
         cvv: String = "408",
@@ -176,6 +176,16 @@ class CheckoutViewModel @Inject constructor(
                         )
                     )
                 }
+                cardNumber.text.startsWith("4") ||
+                cardNumber.text.startsWith("5") &&
+                cardNumber.text.length > 16 -> {
+                    state.value = CheckoutScreenState(isLoading = false)
+                    _errorChannel.send(
+                        UiText.StringResource(
+                            R.string.selected_card_type_can_only_be_16_digits_max
+                        )
+                    )
+                }
                 cardNumber.text.trim().count() < 16 -> {
                     state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
@@ -184,9 +194,9 @@ class CheckoutViewModel @Inject constructor(
                         )
                     )
                 }
-                cardNumber.text.toList().any { it.isLetter() } ||
-                        expiryNumber.text.toList().any { it.isLetter() } ||
-                cvcNumber.text.toList().any { it.isLetter() } -> {
+                cardNumber.text.toList().any { !it.isDigit() } ||
+                        expiryNumber.text.toList().any { !it.isDigit() } ||
+                cvcNumber.text.toList().any { !it.isDigit() } -> {
                     state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
@@ -206,6 +216,7 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
+    // CARD ITEM
     private fun cardInfo(): Card? {
         return firebaseAuth.currentUser?.let {
             Card(
@@ -310,13 +321,11 @@ class CheckoutViewModel @Inject constructor(
 
     // EDIT ADDRESS AND SAVE AGAIN
     fun onEditAddressClick(value: TextFieldValue) {
-        if (value.text.isNotBlank()) {
-            topText = R.string.you_can_edit
-            readOnly = false
-            enabled = true
-            address = value
-            saveBtnVisibility = true
-        }
+        topText = R.string.you_can_edit
+        readOnly = false
+        enabled = true
+        address = value
+        saveBtnVisibility = true
     }
 
     // WHEN SET CARD DETAILS BASED ON THE SELECTED CARD IF THERE IS MORE THAN ONE
@@ -325,5 +334,13 @@ class CheckoutViewModel @Inject constructor(
         cvcNumber = TextFieldValue(text = card.cardCvv)
         expiryNumber = TextFieldValue(text = card.cardExpiry)
         cardNumber = TextFieldValue(text = card.cardNumber)
+    }
+
+    // CLEANS PREVIOUSLY ENTERED ADDRESS FOR A NEW ONE
+    fun onAddNewCard() {
+        cardHolderName = TextFieldValue(text = "")
+        cvcNumber = TextFieldValue(text = "")
+        expiryNumber = TextFieldValue(text = "")
+        cardNumber = TextFieldValue(text = "")
     }
 }

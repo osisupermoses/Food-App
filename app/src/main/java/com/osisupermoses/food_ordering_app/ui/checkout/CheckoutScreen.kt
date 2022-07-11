@@ -16,7 +16,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.osisupermoses.food_ordering_app.R
@@ -36,7 +35,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun CheckoutScreen(
     viewModel: CheckoutViewModel = hiltViewModel(),
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    goToMenuScreen: () -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -173,6 +173,7 @@ fun CheckoutScreen(
                         }
                         item {
                             AddNewCard {
+                                viewModel.onAddNewCard()
                                 coroutineScope.launch {
                                     if (sheetState.isExpanded) {
                                         sheetState.collapse()
@@ -210,7 +211,7 @@ fun CheckoutScreen(
                             viewModel.selectedCardHolderIndex != null &&
                             viewModel.address.text.isNotBlank()
                         ) {
-                            viewModel.makePayment(
+                            viewModel.onCheckoutClick(
                                 context = context,
                                 successScreen = {
                                     viewModel.successDialogIsVisible = true
@@ -240,9 +241,9 @@ fun CheckoutScreen(
                     AwesomeCustomDialog(
                         type = AwesomeCustomDialogType.SUCCESS,
                         title = stringResource(R.string.payment_successful),
-                        desc = "TRANSACTION REFERENCE:" + viewModel.state.value.transReference,
-                        onDismiss = {
-                            viewModel.successDialogIsVisible = false
+                        desc = "TRANSACTION REFERENCE: " + viewModel.state.value.transReference,
+                        onOkayClick = {
+                            goToMenuScreen.invoke()
                         }
                     )
                 }
@@ -259,9 +260,10 @@ fun CheckoutScreen(
                         twoOptionsNeeded = true,
                         onDismiss = {
                             viewModel.errorDialogIsVisible = false
+                            goToMenuScreen.invoke()
                         },
                         onRetry = {
-                            viewModel.makePayment(context = context)
+                            viewModel.onCheckoutClick(context = context)
                             viewModel.errorDialogIsVisible = false
                         }
                     )

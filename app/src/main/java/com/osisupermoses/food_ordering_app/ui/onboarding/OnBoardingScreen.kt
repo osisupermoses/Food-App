@@ -102,8 +102,10 @@ fun PagerScreen(onBoardingPage: OnBoardingPage) {
             onBoardingPage.icon?.let { painterResource(it) }?.let {
                 Image(
                     painter = it,
-                    contentDescription = "Cyberpay Logo",
-                    modifier = Modifier.padding(
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .align(CenterHorizontally)
+                        .padding(
                         top = 20.dp,
                         bottom = 39.dp
                     )
@@ -112,7 +114,7 @@ fun PagerScreen(onBoardingPage: OnBoardingPage) {
             Image(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
-                    .fillMaxHeight(0.76f),
+                    .fillMaxHeight(0.8f),
                 painter = painterResource(onBoardingPage.image),
                 contentDescription = "Image"
             )

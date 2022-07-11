@@ -108,7 +108,7 @@ class AuthRepositoryImpl(
         }
     }.flowOn(Dispatchers.IO)
 
-    override suspend fun logOut(): Flow<Resource<Boolean>> = flow {
+    override suspend fun deleteUserAccount(): Flow<Resource<Boolean>> = flow {
         try {
             emit(Resource.Loading())
             auth.currentUser?.apply {

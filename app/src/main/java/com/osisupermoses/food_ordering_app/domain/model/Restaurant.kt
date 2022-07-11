@@ -13,7 +13,9 @@ data class Restaurant(
     val estDeliveryFeeRange: HashMap<Long, Long> = hashMapOf(200.toLong() to 500),
     val estResponseTime: HashMap<String, String> = hashMapOf("20" to "30"),
     val openingHours: HashMap<String, String> = hashMapOf("Monday - Sunday" to "09:00 - 21:00"),
-    val paymentMethods: PaymentMethod = PaymentMethod()
+    val paymentMethods: PaymentMethod = PaymentMethod(),
+    val food: List<Food>? = null
+
 )
 
 data class PaymentMethod(
@@ -30,6 +32,7 @@ fun getRestaurants(): List<Restaurant> =
             restaurantName = "Simi's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 1000.00,
+            food = getFoods()
         ),
         Restaurant(
             frontalImage = R.drawable.jollof_rice_and_chicken,
@@ -37,6 +40,7 @@ fun getRestaurants(): List<Restaurant> =
             restaurantName = "Faith's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 800.00,
+            food = getFoods()
         ),
         Restaurant(
             frontalImage = R.drawable.efo_riro_,
@@ -44,5 +48,6 @@ fun getRestaurants(): List<Restaurant> =
             restaurantName = "Peace's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 800.00,
+            food = getFoods()
         ),
     )

@@ -71,7 +71,7 @@
     <string name="input_a_valid_address_below">Input a valid address below</string>
     <string name="address_saved">Address successfuly saved</string>
     <string name="payment_method">Payment Method</string>
-    <string name="you_can_edit">You can now edit your address..</string>
+    <string name="you_can_edit">You can edit or update the address below</string>
     <string name="card_holder_name">Card holder name</string>
     <string name="card_holder_number">Card number</string>
     <string name="exipry_date">Expiry date</string>
@@ -85,7 +85,14 @@
     <string name="please_enter_a_valid_expiry_date">Please enter a valid expiry number</string>
     <string name="please_enter_a_valid_cvv_date">Please enter a valid CVV number</string>
     <string name="please_enter_a_valid_card_num">Please enter a valid card number</string>
-    <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s)</string>
+    <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s) or symbols</string>
     <string name="card_was_successfully_deleted">Card was successfully deleted</string>
     <string name="couldnot_delete_card">Could not delete card. Check your internet connection and retry.</string>
+    <string name="selected_card_type_can_only_be_16_digits_max">Selected card type can only have a maximum of 16 digits</string>
+    <string name="this_feature_is_coming_soon">This feature is coming soon...</string>
+    <string name="log_out">Log out</string>
+    <string name="please_press_back">Press back again to exit</string>
+    <string name="admin_account">Admin Account</string>
+    <string name="user_account">User Account</string>
+    <string name="password_cannot_be_less_than_6_digits">Password cannot be less than 6 in count</string>
 </resources>

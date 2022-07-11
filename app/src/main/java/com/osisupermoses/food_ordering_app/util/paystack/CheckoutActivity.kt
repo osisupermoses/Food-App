@@ -19,7 +19,7 @@ class CheckoutActivity(private val context: Context) {
     }
 
     fun paystackGateway(
-        cardNumber: String = "4084084084084081",
+        cardNumber: String = "4084084084084081", //test card
         cardExpiry: String = "07/23",
         cvv: String = "408",
         amount: String,
