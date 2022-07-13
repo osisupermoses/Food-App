@@ -14,3 +14,8 @@ devices using tools like:
 This project is still ongoing and open for your contributions.
 
 It was built for the purpose of assessment in securing a role.
+
+
+* Project Shots
+
+![splash](https://user-images.githubusercontent.com/36424292/178795493-6a31d5f7-345b-4017-8bd6-1816135d9711.png)
