@@ -54,7 +54,14 @@ fun RecipesDetailsScreen(
                         .fillMaxSize()
                         .background(color = MaterialTheme.colors.background)
                 ) {
-                    item { recipeDetails.recipe?.let { RecipesHeader(it, navigateUp) } }
+                    item { recipeDetails.recipe?.let {
+                            RecipesHeader(
+                                recipesItem = it,
+                                images = viewModel.getRecipeDetailsImages(it), //to be done for paging images
+                                navigateUp = navigateUp
+                            )
+                        }
+                    }
                     item {
                         recipeDetails.recipe?.let {
                             RecipeOptions(it) { recipe ->

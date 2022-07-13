@@ -1,12 +1,12 @@
 package com.osisupermoses.food_ordering_app.data.repository
 
-import com.google.firebase.FirebaseException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.domain.model.Card
+import com.osisupermoses.food_ordering_app.domain.model.Restaurant
 import com.osisupermoses.food_ordering_app.domain.model.User
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +81,7 @@ class AuthRepositoryImpl(
     override suspend fun getUserInfoFromFirestore(): Flow<Resource<List<User>>> = flow {
         try {
             emit(Resource.Loading())
-            val data = FirebaseFirestore.getInstance().collection(Constants.DB_Collection)
+            val data = FirebaseFirestore.getInstance().collection(Constants.DB_Collection_Users)
                 .get().await().documents.map { documentSnapshot ->
                     documentSnapshot.toObject(User::class.java)!!
                 }
@@ -92,6 +92,22 @@ class AuthRepositoryImpl(
             emit(Resource.Error(message = e.message ?: "Unknown Error"))
         }
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getRestaurantInfoFromFirestore(): Flow<Resource<List<Restaurant>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val data = FirebaseFirestore.getInstance().collection(Constants.DB_Collection_Restaurants)
+                    .get().await().documents.map { documentSnapshot ->
+                        documentSnapshot.toObject(Restaurant::class.java)!!
+                    }
+                emit(Resource.Success(data = data))
+            } catch (e: IOException) {
+                emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
+            } catch (e: Exception) {
+                emit(Resource.Error(message = e.message ?: "Unknown Error"))
+            }
+    }
 
     override suspend fun getCardInfoFromFirestore(): Flow<Resource<List<Card>>>  = flow {
         try {

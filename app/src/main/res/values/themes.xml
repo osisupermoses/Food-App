@@ -3,6 +3,8 @@
 
     <style name="Theme.Food_Ordering_App" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">@color/fui_transparent</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <style name="Theme.CustomSplashScreenTheme" parent="Theme.SplashScreen">

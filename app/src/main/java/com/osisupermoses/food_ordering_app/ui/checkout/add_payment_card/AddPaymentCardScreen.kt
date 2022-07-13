@@ -17,7 +17,6 @@
 package com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card
 
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Button
@@ -27,19 +26,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.osisupermoses.food_ordering_app.R
-import com.osisupermoses.food_ordering_app.domain.model.CardType
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.CreditCardFilter
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.InputItem
 import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.PaymentCard
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutViewModel
 import com.osisupermoses.food_ordering_app.ui.theme.GoldYellow
-import com.osisupermoses.food_ordering_app.ui.theme.masterCardOrange
-import com.osisupermoses.food_ordering_app.ui.theme.visaCardColor
 
 @ExperimentalAnimationApi
 @Composable
@@ -95,7 +90,7 @@ fun AddPaymentCardScreen(
                 ) {
                     InputItem(
                         textFieldValue = viewModel.expiryNumber,
-                        label = stringResource(id = R.string.exipry_date),
+                        label = stringResource(id = R.string.expiry_date),
                         keyboardType = KeyboardType.Number,
                         onTextChanged = {
                             if (it.text.count() <= 4)

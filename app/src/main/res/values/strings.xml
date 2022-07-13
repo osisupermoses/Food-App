@@ -74,7 +74,7 @@
     <string name="you_can_edit">You can edit or update the address below</string>
     <string name="card_holder_name">Card holder name</string>
     <string name="card_holder_number">Card number</string>
-    <string name="exipry_date">Expiry date</string>
+    <string name="expiry_date">Expiry date</string>
     <string name="cvc">CVC</string>
     <string name="payment_successful">Payment was successful!</string>
     <string name="unsuccessful_payment">Oops.. Payment was not successful.</string>
@@ -87,7 +87,7 @@
     <string name="please_enter_a_valid_card_num">Please enter a valid card number</string>
     <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s) or symbols</string>
     <string name="card_was_successfully_deleted">Card was successfully deleted</string>
-    <string name="couldnot_delete_card">Could not delete card. Check your internet connection and retry.</string>
+    <string name="could_not_delete_card">Could not delete card. Check your internet connection and retry.</string>
     <string name="selected_card_type_can_only_be_16_digits_max">Selected card type can only have a maximum of 16 digits</string>
     <string name="this_feature_is_coming_soon">This feature is coming soon...</string>
     <string name="log_out">Log out</string>
@@ -95,4 +95,22 @@
     <string name="admin_account">Admin Account</string>
     <string name="user_account">User Account</string>
     <string name="password_cannot_be_less_than_6_digits">Password cannot be less than 6 in count</string>
+    <string name="add_product">Add Product</string>
+    <string name="you_denied_permission">You denied permission. Kindly go to settings to fix it.</string>
+    <string name="please_choose_images">Please choose image(s)</string>
+    <string name="submit_listing">Submit Listing</string>
+    <string name="enter_a_unique">Enter a unique name for your product here</string>
+    <string name="product_nam">Product name</string>
+    <string name="enter_your_selling_price_here">Enter your selling price here</string>
+    <string name="price">Unit price</string>
+    <string name="give_a_concise_description">Give a concise description of your product below</string>
+    <string name="description">Description</string>
+    <string name="quantity_in_stock">Inventory quantity</string>
+    <string name="items_in_stock">Items in stock</string>
+    <string name="enter_your_business_name_here">Enter your business name here</string>
+    <string name="restaurant_name">Restaurant name</string>
+    <string name="you_have_to_fill_all_fields">You have to fill up all fields</string>
+    <string name="successful_listing">SUCCESSFULLY SUBMITTED!</string>
+    <string name="item_was_successfully">item was successfully submitted. It will show on customers\' pages soon</string>
+    <string name="go_to_settings_t0">Re-launch the app or go to settings to provide storage permissions required</string>
 </resources>

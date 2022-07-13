@@ -12,6 +12,7 @@ sealed class Screens(val route: String, var title: String) {
         object CartScreen : NoBottomBarScreens("cart")
         object AddPaymentCardScreen : NoBottomBarScreens("add_payment_card")
         object CheckoutScreen : NoBottomBarScreens("checkout")
+        object ListItemScreen : NoBottomBarScreens("list_item")
     }
 
     sealed class BottomBarScreens(route: String, title: String = "") : Screens(route, title) {}

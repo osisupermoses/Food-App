@@ -46,21 +46,22 @@ fun SuccessDialog(
                 .wrapContentHeight()
         ) {
             Column(
-                modifier = Modifier
-                    .size(300.dp)
+                modifier = Modifier.wrapContentSize()
             ) {
                 Spacer(modifier = Modifier.height(36.dp))
                 Box(
                     modifier = Modifier
                         .width(300.dp)
-                        .height(164.dp)
+                        .height(180.dp)
                         .background(
                             color = Color.White,
                             shape = RoundedCornerShape(10.dp)
                         )
                 ) {
                     Column(
-                        modifier = Modifier.padding(16.dp),
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(24.dp))

@@ -1,5 +1,6 @@
 package com.osisupermoses.food_ordering_app.ui.recipes_details.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,13 +26,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.google.accompanist.pager.ExperimentalPagerApi
 import com.osisupermoses.food_ordering_app.domain.model.RecipesItem
 import com.osisupermoses.food_ordering_app.domain.model.getRecipeItemList
 
+@OptIn(ExperimentalFoundationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun RecipesHeader(
     recipesItem: RecipesItem,
+    images: List<String> = emptyList(),
     navigateUp: () -> Unit = {},
 ) {
     ConstraintLayout(
@@ -40,9 +44,15 @@ fun RecipesHeader(
             .height(300.dp)
     ) {
         val (image, info, topBar, title) = createRefs()
-        AsyncImage(
-            model = recipesItem.image ?: "",
-            contentDescription = null,
+
+//        PhotoPager(
+//            images = images,
+//            page = recipesItem.images?.size ?: 1
+//        )
+        ZoomableImage(
+            painter = rememberAsyncImagePainter(model = images.first()),
+            isRotation = false,
+//            contentDescription = null,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(346.dp)
@@ -58,11 +68,11 @@ fun RecipesHeader(
                     height = Dimension.fillToConstraints
                 },
             contentScale = ContentScale.Crop,
-            onLoading = {
-//                Box(modifier = Modifier.fillMaxSize()) {
-//                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-//                }
-            }
+//            onLoading = {
+////                Box(modifier = Modifier.fillMaxSize()) {
+////                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+////                }
+//            }
         )
         DetailsAppBar(
             modifier = Modifier
@@ -163,5 +173,5 @@ fun DetailsAppBar(modifier: Modifier, onBackPressed: () -> Unit) {
 @Preview
 @Composable
 fun Preview() {
-    RecipesHeader(recipesItem = getRecipeItemList()[1])
+    RecipesHeader(recipesItem = getRecipeItemList()[1], emptyList())
 }

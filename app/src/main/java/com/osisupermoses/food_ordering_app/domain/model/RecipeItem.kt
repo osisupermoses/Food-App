@@ -1,9 +1,10 @@
 package com.osisupermoses.food_ordering_app.domain.model
 
-import com.osisupermoses.food_ordering_app.R
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class RecipesItem(
-    val id: Int? = 1,
+    val id: Long? = 1,
     val sustainable: Boolean? = null,
     val glutenFree: Boolean? = null,
     val veryPopular: Boolean? = null,
@@ -11,18 +12,18 @@ data class RecipesItem(
     val title: String? = null,
     val price: Double = 0.0,
     val deliveryFee: Double = 0.0,
-    val total: Double = price + deliveryFee,
+    val total: Double? = null,
     val aggregateLikes: Int? = null,
     val creditsText: String? = null,
     val readyInMinutes: Int? = null,
     val dairyFree: Boolean? = null,
     val vegetarian: Boolean? = null,
-    val foodCategory: String = "Sncaks",
+    val foodCategory: String? = null,
     val totalStock: Long = 20,
     val quantityPurchased: Long = 0,
-    val quantityInStock: Long = totalStock - quantityPurchased,
+    val quantityInStock: Long? = null,
     val restaurantId: Long? = null,
-    val image: Any? = null,
+    val images: List<String>? = null,
     val veryHealthy: Boolean? = null,
     val vegan: Boolean? = null,
     val cheap: Boolean? = null,
@@ -32,11 +33,12 @@ data class RecipesItem(
     val percentProtein: Double? = null,
     val percentFat: Double? = null,
     val nutrientsAmount: Double? = 0.0,
-    val nutrientsName: String? = "",
+    val nutrientsName: String? = null,
     val servings: Int? = 0,
-    val step: List<String>? = emptyList(),
-    val ingredientOriginalString: List<String>? = emptyList(),
-    var saved: Boolean = false
+    val step: List<String>? = null,
+    val ingredientOriginalString: List<String>? = null,
+    var saved: Boolean = false,
+    var userId: String = "",
 )
 
 fun getRecipeItemList(): List<RecipesItem> =
@@ -55,7 +57,7 @@ fun getRecipeItemList(): List<RecipesItem> =
             readyInMinutes = 20,
             dairyFree = true,
             vegetarian = true,
-            image = R.drawable.dominos_pizza,
+//            image = listOf(R.drawable.dominos_pizza) as List<Uri>,
             veryHealthy = true,
             vegan = false,
             cheap = true,
@@ -84,7 +86,7 @@ fun getRecipeItemList(): List<RecipesItem> =
             price = 1200.00,
             deliveryFee = 200.00,
             vegetarian = true,
-            image = R.drawable.dough_,
+//            image = listOf(R.drawable.dough_),
             veryHealthy = true,
             vegan = false,
             cheap = true,
@@ -113,7 +115,7 @@ fun getRecipeItemList(): List<RecipesItem> =
             vegetarian = true,
             price = 1000.00,
             deliveryFee = 200.00,
-            image = R.drawable.pizza2,
+//            image = listOf(R.drawable.pizza2),
             veryHealthy = true,
             vegan = false,
             cheap = true,
@@ -128,5 +130,4 @@ fun getRecipeItemList(): List<RecipesItem> =
             ingredientOriginalString = listOf("Flour", "Pasta", "Jam"),
             saved = true
         ),
-
-)
+    )

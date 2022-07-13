@@ -132,7 +132,7 @@ class CheckoutViewModel @Inject constructor(
                         state.value = CheckoutScreenState(isLoading = true)
                     }
                     is Resource.Success -> {
-                        val cards = result.data?.toList()
+                        val cards = result.data?.toList()!!.filter { it.userId == firebaseAuth.currentUser?.uid }
                         state.value = CheckoutScreenState(
                             isLoading = false,
                             cardList = cards
@@ -289,7 +289,7 @@ class CheckoutViewModel @Inject constructor(
                 state.value = CheckoutScreenState(isLoading = false)
                 viewModelScope.launch {
                     Log.e("Error", "Error deleting document", it)
-                    _errorChannel.send(UiText.StringResource(R.string.couldnot_delete_card))
+                    _errorChannel.send(UiText.StringResource(R.string.could_not_delete_card))
                 }
             }
     }

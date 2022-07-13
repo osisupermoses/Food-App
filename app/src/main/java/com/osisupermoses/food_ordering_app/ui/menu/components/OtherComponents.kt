@@ -1,5 +1,6 @@
 package com.osisupermoses.food_ordering_app.ui.menu.components
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -29,6 +31,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
+import coil.request.ImageResult
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.ui.theme.spacing
 
@@ -112,6 +116,7 @@ fun PopularItem(
     price: Double,
     estDeliveryTime: String,
     orderRating: Double,
+    context: Context,
     onRatingClick: () -> Unit,
     onPopularItemClick: () -> Unit
 ) {
@@ -121,7 +126,15 @@ fun PopularItem(
             .clickable { onPopularItemClick.invoke() }
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = image),
+            painter = rememberAsyncImagePainter(
+                model =
+                ImageRequest
+                    .Builder(context = context)
+                    .crossfade(true)
+                    .data(image)
+                    .build(),
+                filterQuality = FilterQuality.High
+            ),
             contentDescription = "Item Image",
             modifier = Modifier
                 .clip(RoundedCornerShape(MaterialTheme.spacing.semiLarge))
@@ -188,6 +201,7 @@ fun RestaurantItem(
     frontalImage: Any?,
     restaurantName: String,
     restaurantReviewScore: Double,
+    context: Context,
     onReviewScoreClick: () -> Unit,
     onRestaurantItemClick: () -> Unit
 ) {
@@ -198,7 +212,11 @@ fun RestaurantItem(
             .clickable { onRestaurantItemClick.invoke() }
     ) {
         Image(
-            painter = rememberAsyncImagePainter(model = frontalImage),
+            painter = rememberAsyncImagePainter(
+                model = ImageRequest.Builder(context = context)
+                    .crossfade(true).data(frontalImage).build(),
+                filterQuality = FilterQuality.High
+            ),
             contentDescription = "Item Image",
             modifier = Modifier
                 .clip(RoundedCornerShape(MaterialTheme.spacing.medium))

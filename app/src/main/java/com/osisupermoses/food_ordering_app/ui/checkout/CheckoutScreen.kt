@@ -122,7 +122,7 @@ fun CheckoutScreen(
                             viewModel.onEditAddressClick(addressTextField)
                         },
                         onSaveClick = { addressTextField ->
-                            keyboardController?.hide()
+//                            keyboardController?.hide()
                             viewModel.onSaveAddressClick(addressTextField)
                         }
                     )

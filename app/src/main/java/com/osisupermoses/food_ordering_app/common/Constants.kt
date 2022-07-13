@@ -3,7 +3,6 @@ package com.osisupermoses.food_ordering_app.common
 object Constants {
     const val PARAM_MOBILE_NUMBER = "mobileNumber"
     const val PARAM_OTP_VALUE = "otp"
-    const val DB_Collection = "users"
     const val Email = "email"
 
     const val FOOD_ID = "foodId"
@@ -14,5 +13,7 @@ object Constants {
 
     const val CARD_ID = "cardId"
 
+    const val DB_Collection_Users = "users"
     const val DB_Collection_Cards = "cards"
+    const val DB_Collection_Restaurants = "restaurants"
 }

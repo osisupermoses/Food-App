@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.ui.Login.LoginScreen
+import com.osisupermoses.food_ordering_app.ui.list_item.ListItemScreen
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutScreen
 import com.osisupermoses.food_ordering_app.ui.recipes_details.RecipesDetailsScreen
 import com.osisupermoses.food_ordering_app.ui.menu.MenuScreen
@@ -76,14 +77,14 @@ internal fun SetUpNavGraphNoBottomBar(
 //                    )
                 },
                 toMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) },
-                toAdminScreen = {  },
+                toAdminScreen = { navController.navigate(Screens.NoBottomBarScreens.ListItemScreen.route) },
                 toLogInScreen = { navController.navigate(Screens.NoBottomBarScreens.LogInScreen.route) }
             )
         }
         composable(
             route = Screens.NoBottomBarScreens.RecipesDetailsScreen.route + "/{${Constants.FOOD_ID}}",
             arguments = listOf(
-                navArgument(Constants.FOOD_ID) { type = NavType.IntType },
+                navArgument(Constants.FOOD_ID) { type = NavType.LongType },
 //                navArgument(Constants.RESTAURANT_ID) { type = NavType.IntType},
             )
         ) {
@@ -108,6 +109,13 @@ internal fun SetUpNavGraphNoBottomBar(
                 navigateUp = { navController.navigateUp() },
                 goToMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) }
             )
+        }
+        composable(
+            route = Screens.NoBottomBarScreens.ListItemScreen.route
+        ) {
+            ListItemScreen {
+                navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route)
+            }
         }
     }
 }

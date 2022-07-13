@@ -214,7 +214,7 @@ class LoginViewModel @Inject constructor(
 
     private fun saveUserToFirebase(user: User, nextScreen: () -> Unit) {
         val db = FirebaseFirestore.getInstance()
-        val dbCollection = db.collection(Constants.DB_Collection)
+        val dbCollection = db.collection(Constants.DB_Collection_Users)
 
         if (user.toString().isNotEmpty()) {
             dbCollection.add(user)

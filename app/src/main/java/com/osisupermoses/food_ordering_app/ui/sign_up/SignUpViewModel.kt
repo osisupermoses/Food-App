@@ -166,7 +166,7 @@ class SignUpViewModel @Inject constructor(
 
     private fun saveToFirebase(user: User) {
         val db = FirebaseFirestore.getInstance()
-        val dbCollection = db.collection(Constants.DB_Collection)
+        val dbCollection = db.collection(Constants.DB_Collection_Users)
 
         if (user.toString().isNotEmpty()) {
             dbCollection.add(user)
