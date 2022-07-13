@@ -1,7 +1,7 @@
 # Food-App
 
 This is a sample project of a food ordering app built for Android
-devices using tools like:
+devices using the following tools, libraries and architecture:
 
 * Jetpack Compose - Declarative UI
 
@@ -11,7 +11,7 @@ devices using tools like:
 
 * Paystack SDK - For making payment
  
-* Architecture used - Clean Architecture 
+* Architecture used - Clean Architecture (MVVM improvement)
 
 This project is still ongoing and open for your contributions.
 
