@@ -7,6 +7,8 @@ devices using tools like:
 
 * Firebase Firestore - Authentication and cloud storage
 
+* Has both User and Admin functionalities (user is for buyers, while admin is for registered stores that want to upload their items for others to buy)
+
 * Paystack SDK - For making payment
  
 * Architecture used - Clean Architecture 
@@ -37,3 +39,7 @@ It was built for the purpose of assessment in securing a role.
 ![add_card_verve](https://user-images.githubusercontent.com/36424292/178796063-141d5749-99d4-4eae-9aad-91452fe4420f.png)
 ![successful_payment](https://user-images.githubusercontent.com/36424292/178796073-dc8d8474-e4c2-46fc-b12f-b42197a1338d.png)
 ![user_panel](https://user-images.githubusercontent.com/36424292/178796088-1d8e4bb5-69c4-43c4-9688-21d58a5c275a.png)
+
+* Testing
+You can use the email: test@gmail.com with the password test123 to access the admin features.
+For normal user experience, register with any email and then login with it. You can sign in with google as well.
