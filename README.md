@@ -9,6 +9,10 @@ devices using the following tools, libraries and architecture:
 
 * Firebase Firestore - Authentication and cloud storage
 
+* Hilt - For dependency Injection
+
+* Datastore - as data/shared pref
+
 * Has both Buyer and Seller functionalities (user account is for buyers, while seller/admin account is for registered stores that want to upload their items for others to buy)
 
 * Paystack SDK - For making payment
