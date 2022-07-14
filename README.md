@@ -15,7 +15,7 @@ devices using the following tools, libraries and architecture:
 
 This project is still ongoing and open for your contributions.
 
-It was built for the purpose of assessment in securing a role.
+It was built for the purpose of an assessment aimed at securing a role.
 
 
 ## App Flow
