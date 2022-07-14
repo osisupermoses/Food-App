@@ -3,6 +3,8 @@
 This is a sample project of a food ordering app built for Android
 devices using the following tools, libraries and architecture:
 
+* Kotlin/Java - Preferred Language
+
 * Jetpack Compose - Declarative UI
 
 * Firebase Firestore - Authentication and cloud storage
