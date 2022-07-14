@@ -15,6 +15,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.ui.theme.ErrorColor
 
 @Composable
@@ -31,6 +33,7 @@ fun ImagePreviewItem(
     ) {
         AsyncImage(
             model = uri,
+            placeholder = rememberAsyncImagePainter(model = R.drawable.imageplaceholder),
             contentDescription = "Image",
             modifier = Modifier
                 .width(width)
@@ -47,7 +50,7 @@ fun ImagePreviewItem(
                 modifier = Modifier
                     .padding(4.dp)
                     .size(20.dp),
-                tint = ErrorColor
+                tint = Color.White
             )
         }
     }

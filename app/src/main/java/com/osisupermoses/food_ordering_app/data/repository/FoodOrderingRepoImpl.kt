@@ -4,8 +4,6 @@ import coil.network.HttpException
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.domain.model.*
 import com.osisupermoses.food_ordering_app.domain.repository.FoodOrderingRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.io.IOException
 
 class FoodOrderingRepoImpl : FoodOrderingRepository {
@@ -45,7 +43,7 @@ class FoodOrderingRepoImpl : FoodOrderingRepository {
     override fun getRecipeDetails(id: Long): Resource<RecipesItem> {
         //Dummy local data
         return try {
-            val result = getRecipeItemList().firstOrNull { it.id == id }
+            val result = getRecipeItemList().firstOrNull { it.foodId == id }
             Resource.Success(data = result)
         } catch (e: HttpException) {
             e.printStackTrace()

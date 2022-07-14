@@ -87,10 +87,12 @@ class ListItemViewModel @Inject constructor(
         }
     }
 
-    private val randomLong = (0..99999999999).random()
+    private val randomLongFood = (0..99999999999).random()
+    private val randomLongRecipe = (0..99999999999).random()
+    private val randomLongRestaurant = (0..99999999999).random()
 
     private fun restaurantItem() = Restaurant(
-        restaurantId = 1,
+        restaurantId = randomLongRestaurant,
         frontalImage =
             if (_listOfSelectedImages.size > 1) _listOfSelectedImages.last().toString()
             else _listOfSelectedImages.first().toString(),
@@ -100,22 +102,23 @@ class ListItemViewModel @Inject constructor(
         dateAdded = System.currentTimeMillis(),
         food = listOf(
             Food(
-                id = randomLong,
+                id = randomLongFood,
                 name = productTitle,
-                price = productPrice.toDouble(),
+                price = productPrice.replace(",", "").toDouble(),
                 image = _listOfSelectedImages.first().toString(),
                 orderDescription = productDescription,
                 foodCategory = "African food",
                 orderRating = 0.00,
                 recipesItem = RecipesItem(
-                    id = randomLong,
+                    id = randomLongRecipe,
+                    foodId = randomLongFood,
                     sustainable = true,
                     glutenFree = true,
                     veryPopular = true,
                     healthScore = 9.00,
                     title = productTitle,
                     aggregateLikes = 50,
-                    price = 3000.00,
+                    price = productPrice.replace(",", "").toDouble(),
                     deliveryFee = 250.00,
                     creditsText = "Awesome",
                     readyInMinutes = 20,
@@ -133,7 +136,7 @@ class ListItemViewModel @Inject constructor(
                     nutrientsAmount = 8.00,
                     servings = 20,
                     step = listOf("Unavailable at the moment"),
-                    ingredientOriginalString = listOf("Flour", "Pasta", "Jam"),
+                    ingredientOriginalString = listOf("Flour", "Pasta", "Jam", "All hard-coded"),
                     saved = true,
                     userId = firebaseAuth.currentUser?.uid!!
                 ),

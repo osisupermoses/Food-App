@@ -24,12 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.request.ImageResult
@@ -125,23 +127,22 @@ fun PopularItem(
             .fillMaxWidth()
             .clickable { onPopularItemClick.invoke() }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(
-                model =
-                ImageRequest
-                    .Builder(context = context)
-                    .crossfade(true)
-                    .data(image)
-                    .build(),
-                filterQuality = FilterQuality.High
-            ),
+        AsyncImage(
+            model = ImageRequest
+                        .Builder(context = context)
+                        .crossfade(true)
+                        .data(image)
+                        .build(),
+            filterQuality = FilterQuality.High,
+            placeholder = rememberAsyncImagePainter(model = R.drawable.imageplaceholder),
             contentDescription = "Item Image",
             modifier = Modifier
                 .clip(RoundedCornerShape(MaterialTheme.spacing.semiLarge))
                 .size(
-                    height = 200.dp,
+                    height = 170.dp,
                     width = 250.dp
-                )
+                ),
+            contentScale = ContentScale.FillBounds
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
         Text(
@@ -211,19 +212,21 @@ fun RestaurantItem(
             .fillMaxWidth()
             .clickable { onRestaurantItemClick.invoke() }
     ) {
-        Image(
-            painter = rememberAsyncImagePainter(
-                model = ImageRequest.Builder(context = context)
-                    .crossfade(true).data(frontalImage).build(),
-                filterQuality = FilterQuality.High
-            ),
+        AsyncImage(
+           model = ImageRequest
+               .Builder(context = context)
+               .crossfade(true)
+               .data(frontalImage)
+               .build(),
+            filterQuality = FilterQuality.High,
             contentDescription = "Item Image",
             modifier = Modifier
                 .clip(RoundedCornerShape(MaterialTheme.spacing.medium))
                 .size(
-                    height = 200.dp,
+                    height = 170.dp,
                     width = 250.dp
-                )
+                ),
+            contentScale = ContentScale.FillBounds
         )
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.extraSmall))
         Text(

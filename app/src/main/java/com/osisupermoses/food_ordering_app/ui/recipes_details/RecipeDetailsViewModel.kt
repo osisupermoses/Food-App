@@ -10,7 +10,6 @@ import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreReposit
 import com.osisupermoses.food_ordering_app.domain.model.RecipesItem
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.domain.repository.FoodOrderingRepository
-import com.osisupermoses.food_ordering_app.ui.menu.MenuState
 import com.osisupermoses.food_ordering_app.util.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -72,7 +71,7 @@ class RecipeDetailsViewModel @Inject constructor(
                     _state.value = RecipesDetailsViewState(
                         isLoading = false,
                         recipe = response.data?.flatMap { it.food!! }?.map { it.recipesItem }
-                            ?.first { it?.id == id }
+                            ?.first { it?.foodId == id }
                     )
                     Log.i(TAG, "RESTAURANTS: ${response.data}")
                 }

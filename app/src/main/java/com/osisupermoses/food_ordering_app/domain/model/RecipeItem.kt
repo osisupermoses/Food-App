@@ -4,7 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class RecipesItem(
-    val id: Long? = 1,
+    val id: Long? = null,
+    val foodId: Long? = null,
     val sustainable: Boolean? = null,
     val glutenFree: Boolean? = null,
     val veryPopular: Boolean? = null,
@@ -44,7 +45,7 @@ data class RecipesItem(
 fun getRecipeItemList(): List<RecipesItem> =
     listOf(
         RecipesItem(
-            id = 1,
+            foodId = 1,
             sustainable = true,
             glutenFree = true,
             veryPopular = true,
@@ -73,7 +74,7 @@ fun getRecipeItemList(): List<RecipesItem> =
             saved = true
         ),
         RecipesItem(
-            id = 2,
+            foodId = 2,
             sustainable = true,
             glutenFree = true,
             veryPopular = true,
@@ -102,7 +103,7 @@ fun getRecipeItemList(): List<RecipesItem> =
             saved = true
         ),
         RecipesItem(
-            id = 3,
+            foodId = 3,
             sustainable = true,
             glutenFree = true,
             veryPopular = true,

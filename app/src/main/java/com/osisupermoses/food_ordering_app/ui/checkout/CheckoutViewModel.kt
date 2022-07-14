@@ -308,7 +308,7 @@ class CheckoutViewModel @Inject constructor(
     fun onSaveAddressClick(value: TextFieldValue) {
         viewModelScope.launch {
             if (value.text.isNotBlank()) {
-                dataStoreRepository.save(PreferencesKeys.addressKey, value.text)
+//                dataStoreRepository.save(PreferencesKeys.addressKey, value.text)
                 Log.i(TAG, "ADDRESS: $value")
                 _errorChannel.send(UiText.StringResource(R.string.address_saved))
                 saveBtnVisibility = false
