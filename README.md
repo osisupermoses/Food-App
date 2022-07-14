@@ -41,5 +41,6 @@ It was built for the purpose of assessment in securing a role.
 ![user_panel](https://user-images.githubusercontent.com/36424292/178796088-1d8e4bb5-69c4-43c4-9688-21d58a5c275a.png)
 
 ## Testing
-You can use the email: test@gmail.com with the password test123 to access the admin features.
-For normal user experience, register with any email and then login with it. You can sign in with google as well.
+
+You can use this email - test@gmail.com with this password - test123 to access the admin features.
+For normal user experience, register with any email and then login with it. You can also directly sign in with google as well.
