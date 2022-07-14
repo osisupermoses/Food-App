@@ -7,7 +7,7 @@ devices using the following tools, libraries and architecture:
 
 * Firebase Firestore - Authentication and cloud storage
 
-* Has both User and Admin functionalities (user is for buyers, while admin is for registered stores that want to upload their items for others to buy)
+* Has both Buyer and Seller functionalities (user account is for buyers, while seller/admin account is for registered stores that want to upload their items for others to buy)
 
 * Paystack SDK - For making payment
  
