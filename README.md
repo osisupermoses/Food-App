@@ -11,7 +11,7 @@ devices using the following tools, libraries and architecture:
 
 * Paystack SDK - For making payment
  
-* Architecture used - Clean Architecture (MVVM improvement)
+* Architecture used - Clean Architecture
 
 This project is still ongoing and open for your contributions.
 
