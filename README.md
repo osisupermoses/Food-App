@@ -3,22 +3,24 @@
 This is a sample project of a food ordering app built for Android
 devices using the following tools, libraries and architecture:
 
+* Kotlin/Java - Preferred Language
+
 * Jetpack Compose - Declarative UI
 
 * Firebase Firestore - Authentication and cloud storage
 
-* Has both User and Admin functionalities (user is for buyers, while admin is for registered stores that want to upload their items for others to buy)
+* Has both Buyer and Seller functionalities (user account is for buyers, while seller/admin account is for registered stores that want to upload their items for others to buy)
 
 * Paystack SDK - For making payment
  
-* Architecture used - Clean Architecture (MVVM improvement)
+* Architecture used - Clean Architecture
 
 This project is still ongoing and open for your contributions.
 
-It was built for the purpose of assessment in securing a role.
+It was built for the purpose of an assessment aimed at securing a role.
 
 
-* Project Shots
+## App Flow
 
 ![splash](https://user-images.githubusercontent.com/36424292/178795493-6a31d5f7-345b-4017-8bd6-1816135d9711.png)
 ![onboarding1](https://user-images.githubusercontent.com/36424292/178795599-56b9e067-ad47-4c04-a98e-6d0d9e9c2388.png)
@@ -40,6 +42,7 @@ It was built for the purpose of assessment in securing a role.
 ![successful_payment](https://user-images.githubusercontent.com/36424292/178796073-dc8d8474-e4c2-46fc-b12f-b42197a1338d.png)
 ![user_panel](https://user-images.githubusercontent.com/36424292/178796088-1d8e4bb5-69c4-43c4-9688-21d58a5c275a.png)
 
-* Testing
-You can use the email: test@gmail.com with the password test123 to access the admin features.
-For normal user experience, register with any email and then login with it. You can sign in with google as well.
+## Testing
+
+You can use this email - test@gmail.com with this password - test123 to access the admin features.
+For normal user experience, register with any email and then login with it. You can also directly sign in with google as well.
