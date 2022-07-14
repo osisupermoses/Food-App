@@ -71,7 +71,7 @@
     <string name="input_a_valid_address_below">Input a valid address below</string>
     <string name="address_saved">Address successfuly saved</string>
     <string name="payment_method">Payment Method</string>
-    <string name="you_can_edit">You can edit or update the address below</string>
+    <string name="you_can_edit">You can edit or update receiving address below</string>
     <string name="card_holder_name">Card holder name</string>
     <string name="card_holder_number">Card number</string>
     <string name="expiry_date">Expiry date</string>
