@@ -18,7 +18,7 @@ This project is still ongoing and open for your contributions.
 It was built for the purpose of assessment in securing a role.
 
 
-## Project Shots
+## App Flow
 
 ![splash](https://user-images.githubusercontent.com/36424292/178795493-6a31d5f7-345b-4017-8bd6-1816135d9711.png)
 ![onboarding1](https://user-images.githubusercontent.com/36424292/178795599-56b9e067-ad47-4c04-a98e-6d0d9e9c2388.png)
