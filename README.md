@@ -15,7 +15,7 @@ devices using the following tools, libraries and architecture:
 
 * Has both Buyer and Seller functionalities (user account is for buyers, while seller/admin account is for registered stores that want to upload their items for others to buy)
 
-* Paystack SDK - For making payment
+* Paystack SDK - For making payment (a test card was used)
  
 * Architecture used - Clean Architecture
 
