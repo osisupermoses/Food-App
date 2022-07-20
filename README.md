@@ -50,3 +50,9 @@ It was built for the purpose of an assessment aimed at securing a role.
 
 You can use this email - test@gmail.com with this password - test123 to access the admin features.
 For normal user experience, register with any email and then login with it. You can also directly sign in with google as well.
+
+
+## Admin Rights
+
+To become an admin and become capable of posting your items for buyers to see, you have to contact us using osisupermoses@gmail.com to register
+an admin account with our backend. Cheers!😃
