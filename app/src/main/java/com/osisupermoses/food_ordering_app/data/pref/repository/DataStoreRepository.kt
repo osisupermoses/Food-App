@@ -1,6 +1,7 @@
 package com.osisupermoses.food_ordering_app.data.pref.repository
 
 import android.content.Context
+import android.net.Uri
 import androidx.core.net.toUri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
@@ -54,12 +55,8 @@ class DataStoreRepository(context: Context) {
             preferences[key] ?: ""
         }
 
-    fun getPopularImageUri(food: Food): String? {
-        return getPath(context, food.image.toUri())
-    }
-
-    fun getRestaurantFrontalImageUri(restaurant: Restaurant): String? {
-        return getPath(context, restaurant.frontalImage!!.toUri())
+    fun getImageUri(uri: Uri): String? {
+        return getPath(context, uri)
     }
 
     fun getRecipeDetailsImages(recipesItem: RecipesItem): List<String> {

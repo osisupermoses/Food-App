@@ -251,23 +251,6 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    //CRUD - UPDATE CARD DETAIL(S)
-    private fun updateDbWithId(card: Card, nextScreen: () -> Unit) {
-        val cardId = card.id.toString()
-        FirebaseFirestore.getInstance()
-            .collection(Constants.DB_Collection_Cards)
-            .document(cardId)
-            .update(hashMapOf("id" to cardId) as Map<String, Any>)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    nextScreen()
-                }
-            }
-            .addOnFailureListener {
-                Log.w("Error", "Error updating document", it)
-            }
-    }
-
     //CRUD = DELETE CARD ITEM
     fun onDeleteCard(cardId: String) {
         state.value = CheckoutScreenState(isLoading = true)

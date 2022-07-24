@@ -24,12 +24,12 @@ import com.osisupermoses.food_ordering_app.util.toasty
 fun RecipesDetailsScreen(
     viewModel: RecipeDetailsViewModel = hiltViewModel(),
     navigateUp: () -> Unit,
+    toCartScreen: () -> Unit,
     toCheckoutScreen: (String, String) -> Unit,
 ) {
     val recipeDetails by viewModel.viewState.collectAsState()
     val scaffoldState = rememberScaffoldState()
 
-    var addToCart by remember { mutableStateOf(R.string.add_to_cart) }
     val context = LocalContext.current
 
     LaunchedEffect(key1 = true) {
@@ -54,7 +54,7 @@ fun RecipesDetailsScreen(
                         .fillMaxSize()
                         .background(color = MaterialTheme.colors.background)
                 ) {
-                    item { recipeDetails.recipe?.let {
+                    item { viewModel.recipeItem?.let {
                             RecipesHeader(
                                 recipesItem = it,
                                 images = viewModel.getRecipeDetailsImages(it), //to be done for paging images
@@ -63,42 +63,41 @@ fun RecipesDetailsScreen(
                         }
                     }
                     item {
-                        recipeDetails.recipe?.let {
+                        viewModel.recipeItem?.let {
                             RecipeOptions(it) { recipe ->
                                 viewModel.saveRecipe(recipe)
                             }
                         }
                     }
                     item { RecipeDivider() }
-                    item { recipeDetails.recipe?.let { RecipeSummary(it) } }
+                    item { viewModel.recipeItem?.let { RecipeSummary(it) } }
                     item { RecipeDivider() }
-                    item { recipeDetails.recipe?.let { RecipeTags(it) } }
-                    item { recipeDetails.recipe?.let { RecipeCaloric(it) } }
+                    item { viewModel.recipeItem?.let { RecipeTags(it) } }
+                    item { viewModel.recipeItem?.let { RecipeCaloric(it) } }
                     item { RecipeDivider() }
                     item { RecipeIngredientTitle() }
-                    items(recipeDetails.recipe?.ingredientOriginalString ?: listOf()) { recipe ->
+                    items(viewModel.recipeItem?.ingredientOriginalString ?: listOf()) { recipe ->
                         RecipeIngredientItem(recipe)
                     }
                     item { RecipeDivider() }
-                    item { RecipeSteps(recipeDetails.recipe?.step) }
+                    item { RecipeSteps(viewModel.recipeItem?.step) }
                     item { Spacer(modifier = Modifier.height(30.dp)) }
                     item {
                         Button(
                             modifier = Modifier.padding(horizontal = 30.dp),
-                            text = stringResource(addToCart)
+                            text = stringResource(viewModel.addToCart.value)
                         ) {
-                            toasty(context, context.getString(R.string.item_added))
-                            addToCart = R.string.view_in_cart
+                            viewModel.onAddToCart(toCartScreen)
                         }
                         Spacer(modifier = Modifier.height(20.dp))
                         Button(
                             modifier = Modifier.padding(horizontal = 30.dp),
                             text = stringResource(R.string.order_now)
                         ) {
-                            recipeDetails.recipe?.let {
+                            viewModel.recipeItem?.let {
                                 toCheckoutScreen.invoke(
                                     it.price.toString(),
-                                    recipeDetails.recipe!!.deliveryFee.toString()
+                                    viewModel.recipeItem?.deliveryFee.toString()
                                 )
                             }
                         }

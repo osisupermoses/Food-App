@@ -25,6 +25,7 @@ import com.osisupermoses.food_ordering_app.ui.theme.spacing
 import com.osisupermoses.food_ordering_app.ui.ui_common.SectionHeader
 import com.osisupermoses.food_ordering_app.util.dialog.awesome_custom_dalog.AwesomeCustomDialog
 import com.osisupermoses.food_ordering_app.util.loading.CustomCircularProgressIndicator
+import com.osisupermoses.food_ordering_app.util.parseNumberToCurrencyFormat
 import com.osisupermoses.food_ordering_app.util.toasty
 import com.osisupermoses.trustsoft_fintech_compose.util.ui_utils.dialogs.awesome_custom_dalog.AwesomeCustomDialogType
 import kotlinx.coroutines.launch
@@ -193,10 +194,10 @@ fun CheckoutScreen(
                         modifier = Modifier
                             .padding(horizontal = MaterialTheme.spacing.medium)
                             .fillMaxWidth(),
-                        itemPrice = viewModel.currencySymbol + viewModel.itemPrice,
-                        deliveryFee = viewModel.currencySymbol + viewModel.deliveryFee,
-                        discount = "${viewModel.currencySymbol}${viewModel.discount}",
-                        totalAmount = "${viewModel.currencySymbol}${viewModel.total}"
+                        itemPrice = viewModel.currencySymbol + parseNumberToCurrencyFormat(viewModel.itemPrice.toDouble()),
+                        deliveryFee = viewModel.currencySymbol + parseNumberToCurrencyFormat(viewModel.deliveryFee.toDouble()),
+                        discount = "${viewModel.currencySymbol}${parseNumberToCurrencyFormat(viewModel.discount)}",
+                        totalAmount = "${viewModel.currencySymbol}${parseNumberToCurrencyFormat(viewModel.total)}"
                     )
                 }
                 item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.large)) }

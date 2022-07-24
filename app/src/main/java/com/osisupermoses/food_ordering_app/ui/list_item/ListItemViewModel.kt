@@ -117,6 +117,7 @@ class ListItemViewModel @Inject constructor(
                     veryPopular = true,
                     healthScore = 9.00,
                     title = productTitle,
+                    cartLimit = 10,
                     aggregateLikes = 50,
                     price = productPrice.replace(",", "").toDouble(),
                     deliveryFee = 250.00,

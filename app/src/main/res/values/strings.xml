@@ -113,4 +113,10 @@
     <string name="successful_listing">SUCCESSFULLY SUBMITTED!</string>
     <string name="item_was_successfully">item was successfully submitted. It will show on customers\' pages soon</string>
     <string name="go_to_settings_t0">Re-launch the app or go to settings to provide storage permissions required</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="shipping_charge">Shipping Charge</string>
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="you_have_reached_cart_or_stock_limit">You have reached cart or stock limit for this item.</string>
+    <string name="no_item_added">Oops! It is empty here. \nAdd some items</string>
+    <string name="delivery_charge">Delivery Charge</string>
 </resources>

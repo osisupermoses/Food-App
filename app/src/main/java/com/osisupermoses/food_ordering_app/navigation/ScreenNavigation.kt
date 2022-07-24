@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.ui.Login.LoginScreen
+import com.osisupermoses.food_ordering_app.ui.cart.CartScreen
 import com.osisupermoses.food_ordering_app.ui.list_item.ListItemScreen
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutScreen
 import com.osisupermoses.food_ordering_app.ui.recipes_details.RecipesDetailsScreen
@@ -28,10 +29,6 @@ internal fun SetUpNavGraphNoBottomBar(
         navController = navController,
         startDestination = startDestination,
         route = NO_BOTTOM_BAR_ROUTE,
-//        enterTransition = { defaultFoodAppEnterTransition(initialState, targetState) },
-//        exitTransition = { defaultFoodAppExitTransition(initialState, targetState) },
-//        popEnterTransition = { defaultFoodAppPopEnterTransition() },
-//        popExitTransition = { defaultFoodAppPopExitTransition() }
     ) {
         composable(Screens.NoBottomBarScreens.WelcomeScreen.route) {
             WelcomeScreen {
@@ -82,6 +79,14 @@ internal fun SetUpNavGraphNoBottomBar(
             )
         }
         composable(
+            route = Screens.NoBottomBarScreens.ListItemScreen.route
+        ) {
+            ListItemScreen(
+                navigateUp = { navController.navigateUp() },
+                goToMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) }
+            )
+        }
+        composable(
             route = Screens.NoBottomBarScreens.RecipesDetailsScreen.route + "/{${Constants.FOOD_ID}}",
             arguments = listOf(
                 navArgument(Constants.FOOD_ID) { type = NavType.LongType },
@@ -90,9 +95,28 @@ internal fun SetUpNavGraphNoBottomBar(
         ) {
             RecipesDetailsScreen (
                 navigateUp = { navController.navigateUp() },
+                toCartScreen = { navController.navigate(Screens.NoBottomBarScreens.CartScreen.route) },
                 toCheckoutScreen = { price, deliveryFee ->
                     navController.navigate(Screens.NoBottomBarScreens.CheckoutScreen.route +
                             "/${price}/${deliveryFee}"
+                    )
+                }
+            )
+        }
+        composable(
+            route = Screens.NoBottomBarScreens.CartScreen.route
+        ) {
+            CartScreen(
+                navigateUp = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) },
+                toItemDetailScreen = { recipeItemId ->
+                    navController.navigate(
+                        Screens.NoBottomBarScreens.RecipesDetailsScreen.route + "/$recipeItemId"
+                    )
+                },
+                toCheckoutScreen = { subTotal, deliveryFee ->
+                    navController.navigate(
+                        Screens.NoBottomBarScreens.CheckoutScreen.route +
+                                "/${subTotal}/${deliveryFee}"
                     )
                 }
             )
@@ -110,55 +134,5 @@ internal fun SetUpNavGraphNoBottomBar(
                 goToMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) }
             )
         }
-        composable(
-            route = Screens.NoBottomBarScreens.ListItemScreen.route
-        ) {
-            ListItemScreen {
-                navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route)
-            }
-        }
     }
-}
-
-@ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultFoodAppEnterTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): EnterTransition {
-    val initialNavGraph = initial.destination.hostNavGraph
-    val targetNavGraph = target.destination.hostNavGraph
-    // If we're crossing nav graphs (bottom navigation graphs), we crossfade
-    if (initialNavGraph.id != targetNavGraph.id) {
-        return fadeIn()
-    }
-    // Otherwise we're in the same nav graph, we can imply a direction
-    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.Start)
-}
-
-@ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultFoodAppExitTransition(
-    initial: NavBackStackEntry,
-    target: NavBackStackEntry,
-): ExitTransition {
-    val initialNavGraph = initial.destination.hostNavGraph
-    val targetNavGraph = target.destination.hostNavGraph
-    // If we're crossing nav graphs (bottom navigation graphs), we crossfade
-    if (initialNavGraph.id != targetNavGraph.id) {
-        return fadeOut()
-    }
-    // Otherwise we're in the same nav graph, we can imply a direction
-    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.Start)
-}
-
-private val NavDestination.hostNavGraph: NavGraph
-    get() = hierarchy.first { it is NavGraph } as NavGraph
-
-@ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultFoodAppPopEnterTransition(): EnterTransition {
-    return fadeIn() + slideIntoContainer(AnimatedContentScope.SlideDirection.End)
-}
-
-@ExperimentalAnimationApi
-private fun AnimatedContentScope<*>.defaultFoodAppPopExitTransition(): ExitTransition {
-    return fadeOut() + slideOutOfContainer(AnimatedContentScope.SlideDirection.End)
 }

@@ -16,4 +16,5 @@ object Constants {
     const val DB_Collection_Users = "users"
     const val DB_Collection_Cards = "cards"
     const val DB_Collection_Restaurants = "restaurants"
+    const val DB_Collection_CartItems = "cartItems"
 }

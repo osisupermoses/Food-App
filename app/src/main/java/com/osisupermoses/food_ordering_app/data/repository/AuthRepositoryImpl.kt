@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.domain.model.Card
+import com.osisupermoses.food_ordering_app.domain.model.CartItem
 import com.osisupermoses.food_ordering_app.domain.model.Restaurant
 import com.osisupermoses.food_ordering_app.domain.model.User
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
@@ -107,7 +108,23 @@ class AuthRepositoryImpl(
             } catch (e: Exception) {
                 emit(Resource.Error(message = e.message ?: "Unknown Error"))
             }
-    }
+    }.flowOn(Dispatchers.IO)
+
+    override suspend fun getCartItemsFromFirestore(): Flow<Resource<List<CartItem>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val data = FirebaseFirestore.getInstance().collection(Constants.DB_Collection_CartItems)
+                    .get().await().documents.map { documentSnapshot ->
+                        documentSnapshot.toObject(CartItem::class.java)!!
+                    }
+                emit(Resource.Success(data = data))
+            } catch (e: IOException) {
+                emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
+            } catch (e: Exception) {
+                emit(Resource.Error(message = e.message ?: "Unknown Error"))
+            }
+    }.flowOn(Dispatchers.IO)
 
     override suspend fun getCardInfoFromFirestore(): Flow<Resource<List<Card>>>  = flow {
         try {

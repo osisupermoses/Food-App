@@ -51,6 +51,7 @@ import com.osisupermoses.trustsoft_fintech_compose.util.ui_utils.dialogs.awesome
 @Composable
 fun ListItemScreen(
     viewModel: ListItemViewModel = hiltViewModel(),
+    navigateUp: () -> Unit,
     goToMenuScreen: () -> Unit
 ) {
 
@@ -83,7 +84,7 @@ fun ListItemScreen(
     }
 
     Scaffold(
-        topBar = { ListItemTopBar() },
+        topBar = { ListItemTopBar(navigateUp = navigateUp) },
         scaffoldState = scaffoldState
     ) { paddingValues ->
         Box(

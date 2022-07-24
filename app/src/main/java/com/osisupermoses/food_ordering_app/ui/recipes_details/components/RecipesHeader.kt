@@ -87,7 +87,10 @@ fun RecipesHeader(
 
         Text(
             text = recipesItem.title ?: "",
-            style = MaterialTheme.typography.h4.copy(fontSize = 36.sp),
+            style = MaterialTheme.typography.h4.copy(
+                fontSize = 36.sp,
+                lineHeight = 35.sp
+            ),
             textAlign = TextAlign.Start,
             color = Color.White,
             modifier = Modifier

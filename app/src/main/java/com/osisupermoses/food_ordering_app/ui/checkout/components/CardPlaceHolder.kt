@@ -88,7 +88,7 @@ fun CardPlaceHolderItem(
             }
             Icon(
                 imageVector = Icons.Filled.Delete,
-                contentDescription = "Edit Card Icon",
+                contentDescription = "Delete Card Icon",
                 tint = ErrorColor,
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
