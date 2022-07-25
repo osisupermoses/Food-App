@@ -20,10 +20,16 @@ fun menuItems(): List<MenuItem> {
             icon = Icons.Default.Home
         ),
         MenuItem(
+            id = "cart",
+            title = "Cart",
+            contentDescription = "Go to Cart Screen",
+            icon = Icons.Default.ShoppingCart
+        ),
+        MenuItem(
             id = "orders",
             title = "Orders",
             contentDescription = "Go to Orders Screen",
-            icon = Icons.Default.ShoppingCart
+            icon = Icons.Default.BookOnline
         ),
         MenuItem(
             id = "admin",

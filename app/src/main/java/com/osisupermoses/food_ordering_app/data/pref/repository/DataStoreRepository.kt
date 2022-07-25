@@ -7,15 +7,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import com.osisupermoses.food_ordering_app.data.pref.PreferencesKeys
-import com.osisupermoses.food_ordering_app.domain.model.Food
 import com.osisupermoses.food_ordering_app.domain.model.RecipesItem
-import com.osisupermoses.food_ordering_app.domain.model.Restaurant
-import com.osisupermoses.food_ordering_app.util.getPath
+import com.osisupermoses.food_ordering_app.util.getPathFromUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.io.IOException
+
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "on_boarding_pref")
 
@@ -56,13 +54,13 @@ class DataStoreRepository(context: Context) {
         }
 
     fun getImageUri(uri: Uri): String? {
-        return getPath(context, uri)
+        return getPathFromUri(context, uri)
     }
 
     fun getRecipeDetailsImages(recipesItem: RecipesItem): List<String> {
         val imageList = mutableListOf<String>()
         recipesItem.images?.forEach {
-            val i = getPath(context, it.toUri())
+            val i = getPathFromUri(context, it.toUri())
             if (i != null) {
                 imageList.add(i)
             }

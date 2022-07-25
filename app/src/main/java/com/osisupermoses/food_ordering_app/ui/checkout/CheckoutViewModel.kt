@@ -17,6 +17,7 @@ import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.data.pref.PreferencesKeys
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
+import com.osisupermoses.food_ordering_app.domain.model.Address
 import com.osisupermoses.food_ordering_app.domain.model.Card
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.util.UiText
@@ -63,14 +64,17 @@ class CheckoutViewModel @Inject constructor(
     val currencySymbol by mutableStateOf("₦")
     val itemPrice = savedStateHandle.get<String>(Constants.ITEM_PRICE)!!
     val deliveryFee = savedStateHandle.get<String>(Constants.DELIVERY_FEE)!!
+    var addressList: List<Address> = listOf()
+    var cardList: List<Card> = listOf()
+    var transactionReference by mutableStateOf("")
 
     val discount = 0.00
     val total = itemPrice.toDoubleOrNull()!! + deliveryFee.toDoubleOrNull()!! + discount
 
     init {
         paystackCheckout.initializePaystack()
-        getCardsFromFirestore()
         getAddress()
+        getCardsFromFirestore()
     }
 
     // SEND CARD DETAILS TO PAYSTACK AND RETURNS RESPONSES IN FORM OF STRING
@@ -88,11 +92,9 @@ class CheckoutViewModel @Inject constructor(
         performCharge(
             context = context,
             onSuccess = {
-                state.value = CheckoutScreenState(
-                    isLoading = false,
-                    transReference = it
-                )
-                Log.i(TAG, "Response: ${state.value.transReference}")
+                state.value = CheckoutScreenState(isLoading = false)
+                transactionReference = it
+                Log.i(TAG, "Response: ${transactionReference}")
                 successScreen()
             },
             onFailed = {
@@ -133,10 +135,8 @@ class CheckoutViewModel @Inject constructor(
                     }
                     is Resource.Success -> {
                         val cards = result.data?.toList()!!.filter { it.userId == firebaseAuth.currentUser?.uid }
-                        state.value = CheckoutScreenState(
-                            isLoading = false,
-                            cardList = cards
-                        )
+                        state.value = CheckoutScreenState(isLoading = false)
+                        cardList = cards
                         Log.i(TAG, "FIREBASE RESPONSE: ${result.data}")
                         nextScreen.invoke()
                     }
@@ -154,14 +154,12 @@ class CheckoutViewModel @Inject constructor(
 
     fun onClickSaveCard(nextScreen: () -> Unit) {
         viewModelScope.launch {
-            state.value = CheckoutScreenState(isLoading = true)
             val card: MutableList<Card> = mutableListOf(cardInfo()!!)
-            state.value = CheckoutScreenState(cardList = card)
-            Log.i(TAG, "CARD LIST: ${state.value.cardList}")
+            cardList = card
+            Log.i(TAG, "CARD LIST: $cardList")
             Log.i(TAG, "CARD INFO: ${cardInfo()}")
             when {
                 expiryNumber.text.trim().count() < 4 -> {
-                    state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
                             R.string.please_enter_a_valid_expiry_date
@@ -169,7 +167,6 @@ class CheckoutViewModel @Inject constructor(
                     )
                 }
                 cvcNumber.text.trim().count() < 3 -> {
-                    state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
                             R.string.please_enter_a_valid_cvv_date
@@ -179,7 +176,6 @@ class CheckoutViewModel @Inject constructor(
                 cardNumber.text.startsWith("4") ||
                 cardNumber.text.startsWith("5") &&
                 cardNumber.text.length > 16 -> {
-                    state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
                             R.string.selected_card_type_can_only_be_16_digits_max
@@ -187,7 +183,6 @@ class CheckoutViewModel @Inject constructor(
                     )
                 }
                 cardNumber.text.trim().count() < 16 -> {
-                    state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
                             R.string.please_enter_a_valid_card_num
@@ -197,20 +192,22 @@ class CheckoutViewModel @Inject constructor(
                 cardNumber.text.toList().any { !it.isDigit() } ||
                         expiryNumber.text.toList().any { !it.isDigit() } ||
                 cvcNumber.text.toList().any { !it.isDigit() } -> {
-                    state.value = CheckoutScreenState(isLoading = false)
                     _errorChannel.send(
                         UiText.StringResource(
                             R.string.card_number_expiry_number_cvv_cannot
                         )
                     )
                 }
-                else -> cardInfo()?.let {
-                    saveToFirebase(
-                        it,
-                        nextScreen = {
-                            getCardsFromFirestore(nextScreen)
-                        }
-                    )
+                else -> {
+                    state.value = CheckoutScreenState(isLoading = true)
+                    cardInfo()?.let {
+                        saveToFirebase(
+                            it,
+                            nextScreen = {
+                                getCardsFromFirestore(nextScreen)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -229,7 +226,7 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    // SAVE DATA TO FIRESTORE CLOUD STORAGE
+    // SAVE CARD DATA TO FIRESTORE CLOUD STORAGE
     private fun saveToFirebase(card: Card, nextScreen: () -> Unit = {}) {
         val db = FirebaseFirestore.getInstance()
         val dbCollection = db.collection(Constants.DB_Collection_Cards)
@@ -279,11 +276,31 @@ class CheckoutViewModel @Inject constructor(
 
     // GET SAVED ADDRESS FROM DATASTORE(i.e just like it SharedPref)
     private fun getAddress() {
+        state.value = CheckoutScreenState(isLoading = true)
         viewModelScope.launch {
-            dataStoreRepository.read(PreferencesKeys.addressKey).onEach { response ->
-                address = TextFieldValue(response)
-                Log.i(TAG, "SAVED ADDRESS: $response")
-            }
+            authRepository.getAddressesFromFirestore().onEach { result ->
+                when(result) {
+                    is Resource.Loading -> {
+                        state.value = CheckoutScreenState(isLoading = true)
+                    }
+                    is Resource.Success -> {
+                        try {
+                            val addresses = result.data?.toList()!!.filter { it.userId == firebaseAuth.currentUser?.uid }
+                            state.value = CheckoutScreenState(isLoading = false)
+                            addressList = addresses
+                            address = TextFieldValue(text = addressList.last { it.address.isNotEmpty() }.address)
+                            Log.i(TAG, "FIREBASE RESPONSE ADDRESSES: ${result.data}")
+                        } catch (e: NoSuchElementException) { }
+                    }
+                    is Resource.Error -> {
+                        state.value = CheckoutScreenState(
+                            isLoading = false,
+                            error = result.message ?: "Something went wrong"
+                        )
+                        _errorChannel.send(UiText.DynamicString(result.message.toString()))
+                    }
+                }
+            }.launchIn(viewModelScope)
         }
     }
 
@@ -291,9 +308,33 @@ class CheckoutViewModel @Inject constructor(
     fun onSaveAddressClick(value: TextFieldValue) {
         viewModelScope.launch {
             if (value.text.isNotBlank()) {
-//                dataStoreRepository.save(PreferencesKeys.addressKey, value.text)
-                Log.i(TAG, "ADDRESS: $value")
-                _errorChannel.send(UiText.StringResource(R.string.address_saved))
+                if (!addressList.toList().isNullOrEmpty()) {
+                    if (addressList.any { it.address == address.text }) {
+                        Log.i(TAG, "ADDRESSLIST: $addressList")
+                    } else {
+                        state.value = CheckoutScreenState(isLoading = true)
+                        saveAddressToFirebase(
+                            Address(
+                                address = address.text,
+                                userId = firebaseAuth.uid.toString()
+                            )
+                        )
+                        Log.i(TAG, "ADDRESS: $value")
+                        _errorChannel.send(UiText.StringResource(R.string.address_saved))
+                        getAddress()
+                    }
+                } else {
+                    state.value = CheckoutScreenState(isLoading = true)
+                    saveAddressToFirebase(
+                        Address(
+                            address = address.text,
+                            userId = firebaseAuth.uid.toString()
+                        )
+                    )
+                    Log.i(TAG, "ADDRESS: $value")
+                    _errorChannel.send(UiText.StringResource(R.string.address_saved))
+                    getAddress()
+                }
                 saveBtnVisibility = false
                 readOnly = true
                 enabled = false
@@ -319,11 +360,56 @@ class CheckoutViewModel @Inject constructor(
         cardNumber = TextFieldValue(text = card.cardNumber)
     }
 
-    // CLEANS PREVIOUSLY ENTERED ADDRESS FOR A NEW ONE
+    // CLEANS PREVIOUSLY ENTERED CARD FOR A NEW ONE
     fun onAddNewCard() {
         cardHolderName = TextFieldValue(text = "")
         cvcNumber = TextFieldValue(text = "")
         expiryNumber = TextFieldValue(text = "")
         cardNumber = TextFieldValue(text = "")
+    }
+
+    // SAVES NEW ADDRESS TO FIRESTORE
+    private fun saveAddressToFirebase(address: Address) {
+        val db = FirebaseFirestore.getInstance()
+        val dbCollection = db.collection(Constants.DB_Collection_Addresses)
+
+        if (address.toString().isNotEmpty()) {
+            dbCollection.add(address)
+                .addOnSuccessListener { documentRef ->
+                    val docId = documentRef.id
+                    dbCollection.document(docId)
+                        .update(hashMapOf("id" to docId) as Map<String, Any>)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                Log.i("FB", "User data successfully created: ")
+                            }
+                        }.addOnFailureListener {
+                            Log.w("Error", "SaveToFirebase: Error updating doc", it)
+                        }
+                }
+        }
+    }
+
+    //UPDATES ADDRESS DETAIL(S)
+    private fun updateDbWithId(
+        addressId: String,
+        fieldsToUpdate: Map<String, Any>,
+        nextScreen: () -> Unit
+    ) {
+        FirebaseFirestore.getInstance()
+            .collection(Constants.DB_Collection_CartItems)
+            .document(addressId)
+            .update(fieldsToUpdate)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    nextScreen()
+                }
+            }
+            .addOnFailureListener {
+                Log.e(TAG, "FIRESTORE UPDATE ERROR: ${it.message!!}")
+                viewModelScope.launch {
+                    _errorChannel.send(UiText.DynamicString(it.message.toString()))
+                }
+            }
     }
 }

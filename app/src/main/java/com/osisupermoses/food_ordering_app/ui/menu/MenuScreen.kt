@@ -2,6 +2,9 @@ package com.osisupermoses.food_ordering_app.ui.menu
 
 import android.Manifest
 import android.app.Activity
+import android.content.ContentUris
+import android.net.Uri
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -45,6 +48,7 @@ fun MenuScreen(
     viewModel: MenuScreenViewModel = hiltViewModel(),
     toFoodDetailsScreen: (Long) -> Unit,
     toRestaurantDetailScreen: () -> Unit,
+    toCartScreen: () -> Unit,
     toMenuScreen: () -> Unit,
     toAdminScreen: () -> Unit,
     toLogInScreen: () -> Unit
@@ -59,6 +63,8 @@ fun MenuScreen(
 
     val permissionState = rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
     val lifecycleOwner = LocalLifecycleOwner.current
+
+//    val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cursor.getLong(id))
 
     DisposableEffect(
         key1 = lifecycleOwner,
@@ -140,6 +146,7 @@ fun MenuScreen(
                             when (menuItem.id) {
                                 "admin" -> toAdminScreen.invoke()
                                 "home" -> toMenuScreen.invoke()
+                                "cart" -> toCartScreen.invoke()
                                 else -> {
                                     Toast.makeText(
                                         context,

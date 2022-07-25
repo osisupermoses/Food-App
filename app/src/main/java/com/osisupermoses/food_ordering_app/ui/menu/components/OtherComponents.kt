@@ -22,9 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,6 +39,7 @@ import coil.request.ImageRequest
 import coil.request.ImageResult
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.ui.theme.spacing
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun Header(

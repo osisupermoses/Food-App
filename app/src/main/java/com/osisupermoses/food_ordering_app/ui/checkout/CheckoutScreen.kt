@@ -142,14 +142,14 @@ fun CheckoutScreen(
                 item {
                     LazyRow {
                         item { Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium)) }
-                        viewModel.state.value.cardList?.let {
+                        viewModel.cardList.let {
                             itemsIndexed(it.toList()) { index, card ->
                                 CardPlaceHolderItem(
                                     lastFourDigits = card.cardNumber.takeLast(4),
                                     painter =
-                                        if (card.cardNumber.startsWith("4")) R.drawable.ic_visa_logo
-                                        else if(card.cardNumber.startsWith("5")) R.drawable.mastercard_logo
-                                        else R.drawable.verve,
+                                    if (card.cardNumber.startsWith("4")) R.drawable.ic_visa_logo
+                                    else if(card.cardNumber.startsWith("5")) R.drawable.mastercard_logo
+                                    else R.drawable.verve,
                                     selected = viewModel.selectedCardHolderIndex == index,
                                     onClickCard = {
                                         viewModel.selectedCardHolderIndex = index
@@ -163,8 +163,7 @@ fun CheckoutScreen(
                                     coroutineScope.launch {
                                         if (sheetState.isExpanded) {
                                             sheetState.collapse()
-                                        }
-                                        else {
+                                        } else {
                                             sheetState.expand()
                                         }
                                     }
@@ -206,7 +205,7 @@ fun CheckoutScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 30.dp),
-                        totalAmt = "${viewModel.currencySymbol}${viewModel.total}"
+                        totalAmt = "${viewModel.currencySymbol}${parseNumberToCurrencyFormat(viewModel.total)}"
                     ) {
                         if (
                             viewModel.selectedCardHolderIndex != null &&
@@ -242,7 +241,7 @@ fun CheckoutScreen(
                     AwesomeCustomDialog(
                         type = AwesomeCustomDialogType.SUCCESS,
                         title = stringResource(R.string.payment_successful),
-                        desc = "TRANSACTION REFERENCE: " + viewModel.state.value.transReference,
+                        desc = "TRANSACTION REFERENCE: " + viewModel.transactionReference,
                         onOkayClick = {
                             goToMenuScreen.invoke()
                         }

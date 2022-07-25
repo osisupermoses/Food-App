@@ -1,10 +1,7 @@
 package com.osisupermoses.food_ordering_app.domain.repository
 
 import com.osisupermoses.food_ordering_app.common.Resource
-import com.osisupermoses.food_ordering_app.domain.model.Card
-import com.osisupermoses.food_ordering_app.domain.model.CartItem
-import com.osisupermoses.food_ordering_app.domain.model.Restaurant
-import com.osisupermoses.food_ordering_app.domain.model.User
+import com.osisupermoses.food_ordering_app.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
@@ -24,6 +21,8 @@ interface AuthRepository {
     suspend fun getRestaurantInfoFromFirestore(): Flow<Resource<List<Restaurant>>>
 
     suspend fun getCartItemsFromFirestore(): Flow<Resource<List<CartItem>>>
+
+    suspend fun getAddressesFromFirestore(): Flow<Resource<List<Address>>>
 
     suspend fun getCardInfoFromFirestore(): Flow<Resource<List<Card>>>
 

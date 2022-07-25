@@ -28,7 +28,6 @@ import com.osisupermoses.food_ordering_app.domain.model.Restaurant
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.domain.repository.FoodOrderingRepository
 import com.osisupermoses.food_ordering_app.util.UiText
-import com.osisupermoses.food_ordering_app.util.getPath
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel

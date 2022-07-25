@@ -5,10 +5,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
-import com.osisupermoses.food_ordering_app.domain.model.Card
-import com.osisupermoses.food_ordering_app.domain.model.CartItem
-import com.osisupermoses.food_ordering_app.domain.model.Restaurant
-import com.osisupermoses.food_ordering_app.domain.model.User
+import com.osisupermoses.food_ordering_app.domain.model.*
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
@@ -140,6 +137,22 @@ class AuthRepositoryImpl(
             emit(Resource.Error(message = e.message ?: "Unknown Error"))
         }
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getAddressesFromFirestore(): Flow<Resource<List<Address>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val data = FirebaseFirestore.getInstance().collection(Constants.DB_Collection_Addresses)
+                    .get().await().documents.map { documentSnapshot ->
+                        documentSnapshot.toObject(Address::class.java)!!
+                    }
+                emit(Resource.Success(data = data))
+            } catch (e: IOException) {
+                emit(Resource.Error(message = "Couldn't reach server. Check your internet connection"))
+            } catch (e: Exception) {
+                emit(Resource.Error(message = e.message ?: "Unknown Error"))
+            }
+        }.flowOn(Dispatchers.IO)
 
     override suspend fun deleteUserAccount(): Flow<Resource<Boolean>> = flow {
         try {

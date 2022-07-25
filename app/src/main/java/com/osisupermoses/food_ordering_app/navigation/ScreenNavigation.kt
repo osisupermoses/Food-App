@@ -73,6 +73,7 @@ internal fun SetUpNavGraphNoBottomBar(
 ////                    + "/{restaurantId}"
 //                    )
                 },
+                toCartScreen = { navController.navigate(Screens.NoBottomBarScreens.CartScreen.route) },
                 toMenuScreen = { navController.navigate(Screens.NoBottomBarScreens.MenuScreen.route) },
                 toAdminScreen = { navController.navigate(Screens.NoBottomBarScreens.ListItemScreen.route) },
                 toLogInScreen = { navController.navigate(Screens.NoBottomBarScreens.LogInScreen.route) }
