@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 data class Restaurant(
     val id: String? = null,
     val frontalImage: String? = null,
-    val restaurantId: Long? = null,
+    val restaurantId: String? = null,
     val restaurantName: String? = null,
     val restaurantDescription: String? = null,
     val restaurantAddress: String? = null,
@@ -32,7 +32,7 @@ fun getRestaurants(): List<Restaurant> =
     listOf(
         Restaurant(
 //            frontalImage = R.drawable.ewa_agoyin_,
-            restaurantId = 1,
+            restaurantId = "1",
             restaurantName = "Simi's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 1000.00,
@@ -40,7 +40,7 @@ fun getRestaurants(): List<Restaurant> =
         ),
         Restaurant(
 //            frontalImage = R.drawable.jollof_rice_and_chicken,
-            restaurantId = 2,
+            restaurantId = "2",
             restaurantName = "Faith's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 800.00,
@@ -48,7 +48,7 @@ fun getRestaurants(): List<Restaurant> =
         ),
         Restaurant(
 //            frontalImage = R.drawable.efo_riro_,
-            restaurantId = 3,
+            restaurantId = "3",
             restaurantName = "Peace's Kitchen",
             restaurantDescription = "",
             minOrderPrice = 800.00,

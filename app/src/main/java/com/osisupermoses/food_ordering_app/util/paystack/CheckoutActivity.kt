@@ -19,11 +19,11 @@ class CheckoutActivity(private val context: Context) {
     }
 
     fun paystackGateway(
-        cardNumber: String = "4084084084084081", //test card
-        cardExpiry: String = "07/23",
-        cvv: String = "408",
+        cardNumber: String,
+        cardExpiry: String,
+        cvv: String,
         amount: String,
-        customerEmail: String = "osisuper_moses@yahoo.com",
+        customerEmail: String,
         activityContext: Context,
         onSuccess: (String) -> Unit,
         onFailed: (Throwable) -> Unit
@@ -51,9 +51,9 @@ class CheckoutActivity(private val context: Context) {
         onFailed: (Throwable) -> Unit
     ) {
 
-        val cardExpiryArray = cardExpiry.split("/").toTypedArray()
-        val expiryMonth = cardExpiryArray[0].toInt()
-        val expiryYear = cardExpiryArray[1].toInt()
+//        val cardExpiryArray = cardExpiry.split("/").toTypedArray()
+        val expiryMonth = cardExpiry.substring(0,2).toInt()
+        val expiryYear = cardExpiry.substring(2, 4).toInt()
         val amountInKobo = amount.toDouble() * 100
         val card = Card(cardNumber, expiryMonth, expiryYear, cvv)
 

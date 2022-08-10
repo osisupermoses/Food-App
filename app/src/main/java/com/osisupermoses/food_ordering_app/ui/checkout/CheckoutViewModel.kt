@@ -15,7 +15,6 @@ import com.google.firebase.ktx.Firebase
 import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
-import com.osisupermoses.food_ordering_app.data.pref.PreferencesKeys
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
 import com.osisupermoses.food_ordering_app.domain.model.Address
 import com.osisupermoses.food_ordering_app.domain.model.Card
@@ -28,7 +27,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
+import kotlin.NoSuchElementException
 
 @HiltViewModel
 class CheckoutViewModel @Inject constructor(
@@ -42,7 +43,7 @@ class CheckoutViewModel @Inject constructor(
 
     val state = mutableStateOf(CheckoutScreenState())
     var selectedCardHolderIndex by mutableStateOf<Int?>(null)
-    var cardNumber by mutableStateOf(TextFieldValue())
+    var cardNum by mutableStateOf(TextFieldValue())
     var address by mutableStateOf(TextFieldValue())
 
     var saveBtnVisibility by mutableStateOf(false)
@@ -64,6 +65,7 @@ class CheckoutViewModel @Inject constructor(
     val currencySymbol by mutableStateOf("₦")
     val itemPrice = savedStateHandle.get<String>(Constants.ITEM_PRICE)!!
     val deliveryFee = savedStateHandle.get<String>(Constants.DELIVERY_FEE)!!
+    val isFromCart = savedStateHandle.get<Boolean>(Constants.IS_FROM_CART)!!
     var addressList: List<Address> = listOf()
     var cardList: List<Card> = listOf()
     var transactionReference by mutableStateOf("")
@@ -79,9 +81,9 @@ class CheckoutViewModel @Inject constructor(
 
     // SEND CARD DETAILS TO PAYSTACK AND RETURNS RESPONSES IN FORM OF STRING
     fun onCheckoutClick(
-        cardNumber: String = "4084084084084081",
-        cardExpiry: String = "07/23",
-        cvv: String = "408",
+        cardNumber: String = cardNum.text,
+        cardExpiry: String = expiryNumber.text,
+        cvv: String = cvcNumber.text,
         amount: String = total.toString(),
         customerEmail: String? = firebaseAuth.currentUser?.email,
         context: Context,
@@ -90,12 +92,23 @@ class CheckoutViewModel @Inject constructor(
     ) {
         state.value = CheckoutScreenState(isLoading = true)
         performCharge(
+            cardNumber = cardNumber,
+            cardExpiry = cardExpiry,
+            cvv = cvv,
+            amount = amount,
+            customerEmail = customerEmail ?: "",
             context = context,
             onSuccess = {
                 state.value = CheckoutScreenState(isLoading = false)
                 transactionReference = it
-                Log.i(TAG, "Response: ${transactionReference}")
-                successScreen()
+                Log.i(TAG, "Response: $transactionReference")
+                Log.i(TAG, "CARD NUM: $cardNumber, EXPIRY: $cardExpiry, CVV: $cvv, " +
+                        "AMOUNT: $amount, CUSTOMEREMAIL: $customerEmail"
+                )
+                if (isFromCart) {
+                    clearCartItems()
+                    successScreen
+                } else successScreen()
             },
             onFailed = {
                 viewModelScope.launch {
@@ -104,19 +117,22 @@ class CheckoutViewModel @Inject constructor(
                         error = it.message ?: "Couldn't reach the server"
                     )
                     Log.i(TAG, "Response: ${state.value.error}")
-                    _errorChannel.send(UiText.DynamicString(state.value.error.toString()))
+                    Log.i(TAG, "CARD NUM: $cardNumber, EXPIRY: $cardExpiry, CVV: $cvv, " +
+                            "AMOUNT: $amount, CUSTOMEREMAIL: $customerEmail"
+                    )
                     failedScreen()
                 }
             }
         )
     }
 
+    // PAYSTACK PAYMENT GATEWAY REFACTORED
     private fun performCharge(
-        cardNumber: String = "4084084084084081",
-        cardExpiry: String = "07/23",
-        cvv: String = "408",
-        amount: String = total.toString(),
-        customerEmail: String = "osisuper_moses@yahoo.com",
+        cardNumber: String,
+        cardExpiry: String,
+        cvv: String,
+        amount: String,
+        customerEmail: String,
         context: Context,
         onSuccess: (String) -> Unit,
         onFailed: (Throwable) -> Unit
@@ -152,19 +168,43 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
+    // FORMATS INPUTS AND SAVE
     fun onClickSaveCard(nextScreen: () -> Unit) {
         viewModelScope.launch {
+            val c: Calendar = Calendar.getInstance()
+            val year: Int = c.get(Calendar.YEAR) % 100
+            val month: Int = c.get(Calendar.MONTH)+1
+
             val card: MutableList<Card> = mutableListOf(cardInfo()!!)
             cardList = card
             Log.i(TAG, "CARD LIST: $cardList")
             Log.i(TAG, "CARD INFO: ${cardInfo()}")
+
             when {
-                expiryNumber.text.trim().count() < 4 -> {
+                cardHolderName.text.isBlank() -> {
                     _errorChannel.send(
                         UiText.StringResource(
-                            R.string.please_enter_a_valid_expiry_date
+                            R.string.card_holder_field_cannot_be_blank
                         )
                     )
+                }
+                cardNum.text.trim().count() < 16 -> {
+                    _errorChannel.send(
+                        UiText.StringResource(
+                            R.string.please_enter_a_valid_card_num
+                        )
+                    )
+                }
+                expiryNumber.text.isBlank() -> {
+                    _errorChannel.send(UiText.StringResource(R.string.expiry_number_cannot_be_blank))
+                }
+                expiryNumber.text.isNotEmpty() &&
+                        expiryNumber.text.substring(2).toInt() <= year &&
+                        expiryNumber.text.substring(0, 2).toInt() < month ||
+                        expiryNumber.text.substring(0, 2).toInt() > 12
+                -> {
+                    _errorChannel.send(UiText.StringResource(R.string.please_enter_a_valid_expiry_date))
+
                 }
                 cvcNumber.text.trim().count() < 3 -> {
                     _errorChannel.send(
@@ -173,23 +213,7 @@ class CheckoutViewModel @Inject constructor(
                         )
                     )
                 }
-                cardNumber.text.startsWith("4") ||
-                cardNumber.text.startsWith("5") &&
-                cardNumber.text.length > 16 -> {
-                    _errorChannel.send(
-                        UiText.StringResource(
-                            R.string.selected_card_type_can_only_be_16_digits_max
-                        )
-                    )
-                }
-                cardNumber.text.trim().count() < 16 -> {
-                    _errorChannel.send(
-                        UiText.StringResource(
-                            R.string.please_enter_a_valid_card_num
-                        )
-                    )
-                }
-                cardNumber.text.toList().any { !it.isDigit() } ||
+                cardNum.text.toList().any { !it.isDigit() } ||
                         expiryNumber.text.toList().any { !it.isDigit() } ||
                 cvcNumber.text.toList().any { !it.isDigit() } -> {
                     _errorChannel.send(
@@ -219,7 +243,7 @@ class CheckoutViewModel @Inject constructor(
             Card(
                 cardHolder = cardHolderName.text,
                 userId = it.uid,
-                cardNumber = cardNumber.text,
+                cardNumber = cardNum.text,
                 cardExpiry = expiryNumber.text,
                 cardCvv = cvcNumber.text,
             )
@@ -248,7 +272,7 @@ class CheckoutViewModel @Inject constructor(
         }
     }
 
-    //CRUD = DELETE CARD ITEM
+    //D OF CRUD = DELETE CARD ITEM
     fun onDeleteCard(cardId: String) {
         state.value = CheckoutScreenState(isLoading = true)
         FirebaseFirestore.getInstance()
@@ -259,6 +283,7 @@ class CheckoutViewModel @Inject constructor(
                 if (task.isSuccessful) {
                     state.value = CheckoutScreenState(isLoading = false)
                     viewModelScope.launch {
+                        getCardsFromFirestore()
                         _errorChannel.send(
                             UiText.StringResource(R.string.card_was_successfully_deleted)
                         )
@@ -272,6 +297,11 @@ class CheckoutViewModel @Inject constructor(
                     _errorChannel.send(UiText.StringResource(R.string.could_not_delete_card))
                 }
             }
+    }
+
+    // THIS CLEARS ALL ITEMS CHECKED OUT THROUGH CART
+    private fun clearCartItems() {
+        TODO("Not yet implemented")
     }
 
     // GET SAVED ADDRESS FROM DATASTORE(i.e just like it SharedPref)
@@ -309,13 +339,13 @@ class CheckoutViewModel @Inject constructor(
         viewModelScope.launch {
             if (value.text.isNotBlank()) {
                 if (!addressList.toList().isNullOrEmpty()) {
-                    if (addressList.any { it.address == address.text }) {
+                    if (addressList.any { it.address == address.text.trim() }) {
                         Log.i(TAG, "ADDRESSLIST: $addressList")
                     } else {
                         state.value = CheckoutScreenState(isLoading = true)
                         saveAddressToFirebase(
                             Address(
-                                address = address.text,
+                                address = address.text.trim(),
                                 userId = firebaseAuth.uid.toString()
                             )
                         )
@@ -327,7 +357,7 @@ class CheckoutViewModel @Inject constructor(
                     state.value = CheckoutScreenState(isLoading = true)
                     saveAddressToFirebase(
                         Address(
-                            address = address.text,
+                            address = address.text.trim(),
                             userId = firebaseAuth.uid.toString()
                         )
                     )
@@ -357,7 +387,7 @@ class CheckoutViewModel @Inject constructor(
         cardHolderName = TextFieldValue(text = card.cardHolder)
         cvcNumber = TextFieldValue(text = card.cardCvv)
         expiryNumber = TextFieldValue(text = card.cardExpiry)
-        cardNumber = TextFieldValue(text = card.cardNumber)
+        cardNum = TextFieldValue(text = card.cardNumber)
     }
 
     // CLEANS PREVIOUSLY ENTERED CARD FOR A NEW ONE
@@ -365,7 +395,7 @@ class CheckoutViewModel @Inject constructor(
         cardHolderName = TextFieldValue(text = "")
         cvcNumber = TextFieldValue(text = "")
         expiryNumber = TextFieldValue(text = "")
-        cardNumber = TextFieldValue(text = "")
+        cardNum = TextFieldValue(text = "")
     }
 
     // SAVES NEW ADDRESS TO FIRESTORE

@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuScreen(
     viewModel: MenuScreenViewModel = hiltViewModel(),
-    toFoodDetailsScreen: (Long) -> Unit,
+    toFoodDetailsScreen: (String) -> Unit,
     toRestaurantDetailScreen: () -> Unit,
     toCartScreen: () -> Unit,
     toMenuScreen: () -> Unit,

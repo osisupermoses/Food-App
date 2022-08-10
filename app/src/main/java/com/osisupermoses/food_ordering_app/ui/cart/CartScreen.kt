@@ -12,6 +12,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,10 +35,11 @@ fun CartScreen(
     viewModel: CartViewModel = hiltViewModel(),
     navigateUp: () -> Unit,
     toItemDetailScreen: (String) -> Unit,
-    toCheckoutScreen: (String, String) -> Unit
+    toCheckoutScreen: (String, String, Boolean) -> Unit
 ) {
     val scaffoldState = rememberScaffoldState()
     val context = LocalContext.current
+    val isFromCart = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = true) {
         viewModel.errorChannel.collect { error ->
@@ -110,7 +113,12 @@ fun CartScreen(
                     totalAmount = parseNumberToCurrencyFormat(viewModel.totalAmount().toDouble()),
                     btnEnabled = viewModel.cartItemList!!.isNotEmpty()
                 ) {
-                    toCheckoutScreen.invoke(viewModel.subTotalAmount(), viewModel.deliveryCharges)
+                    isFromCart.value = true
+                    toCheckoutScreen.invoke(
+                        viewModel.subTotalAmount(),
+                        viewModel.deliveryCharges,
+                        isFromCart.value
+                    )
                 }
             }
         }

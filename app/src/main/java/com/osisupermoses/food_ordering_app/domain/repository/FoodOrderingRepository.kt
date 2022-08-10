@@ -13,5 +13,5 @@ interface FoodOrderingRepository {
 
     fun getRestaurantList(): Resource<List<Restaurant>>
 
-    fun getRecipeDetails(id: Long): Resource<RecipesItem>
+    fun getRecipeDetails(id: String): Resource<RecipesItem>
 }

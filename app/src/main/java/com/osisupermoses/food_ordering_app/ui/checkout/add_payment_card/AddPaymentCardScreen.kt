@@ -27,13 +27,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.dp
 import com.osisupermoses.food_ordering_app.R
-import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.CreditCardFilter
-import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.InputItem
-import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.PaymentCard
 import com.osisupermoses.food_ordering_app.ui.checkout.CheckoutViewModel
+import com.osisupermoses.food_ordering_app.ui.checkout.add_payment_card.components.*
 import com.osisupermoses.food_ordering_app.ui.theme.GoldYellow
 
 @ExperimentalAnimationApi
@@ -42,10 +45,13 @@ fun AddPaymentCardScreen(
     viewModel: CheckoutViewModel,
     toCheckout: () -> Unit
 ) {
+    val isVisaOrMaster = remember { mutableStateOf(false) }
+    val textCount = remember { mutableStateOf(18) }
+
     Column(modifier = Modifier.fillMaxSize()) {
         PaymentCard(
             viewModel.cardHolderName,
-            viewModel.cardNumber,
+            viewModel.cardNum,
             viewModel.expiryNumber,
             viewModel.cvcNumber
         )
@@ -67,17 +73,25 @@ fun AddPaymentCardScreen(
 
             item {
                 InputItem(
-                    textFieldValue = viewModel.cardNumber,
+                    textFieldValue = viewModel.cardNum,
                     label = stringResource(id = R.string.card_holder_number),
                     keyboardType = KeyboardType.Number,
                     onTextChanged = {
-                        if (it.text.count() <= 18)
-                        viewModel.cardNumber = it
+                        isVisaOrMaster.value = it.text.startsWith("4") || it.text.startsWith("5")
+                        if (isVisaOrMaster.value) {
+                            textCount.value = 16
+                        } else textCount.value = 18
+                        if (it.text.count() <= textCount.value) {
+                            viewModel.cardNum = it
+                        }
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    visualTransformation = CreditCardFilter
+                    visualTransformation = {
+                        if (isVisaOrMaster.value) creditCardFilter(it)
+                        else creditCardFilterForVerve(it)
+                    }
                 )
             }
 
@@ -98,7 +112,8 @@ fun AddPaymentCardScreen(
                         },
                         modifier = Modifier
                             .weight(1f)
-                            .padding(end = 8.dp)
+                            .padding(end = 8.dp),
+                        visualTransformation = ExpiryCardFilter
                     )
                     InputItem(
                         textFieldValue = viewModel.cvcNumber,

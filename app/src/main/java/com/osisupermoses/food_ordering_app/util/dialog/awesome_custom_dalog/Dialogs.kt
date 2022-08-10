@@ -81,7 +81,9 @@ fun SuccessDialog(
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
-                            )
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(
@@ -145,7 +147,7 @@ fun ErrorDialog(
         ) {
             Column(
                 modifier = Modifier
-                    .size(300.dp)
+                    .size(310.dp)
             ) {
                 Spacer(modifier = Modifier.height(36.dp))
                 Box(
@@ -178,7 +180,9 @@ fun ErrorDialog(
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
-                            )
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(
@@ -281,7 +285,9 @@ fun InfoDialog(
                             style = TextStyle(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Normal
-                            )
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
                         )
                         Spacer(modifier = Modifier.height(24.dp))
                         Button(

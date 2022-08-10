@@ -40,7 +40,7 @@ class FoodOrderingRepoImpl : FoodOrderingRepository {
         }
     }
 
-    override fun getRecipeDetails(id: Long): Resource<RecipesItem> {
+    override fun getRecipeDetails(id: String): Resource<RecipesItem> {
         //Dummy local data
         return try {
             val result = getRecipeItemList().firstOrNull { it.foodId == id }

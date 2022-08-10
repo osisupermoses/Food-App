@@ -44,7 +44,7 @@ class CartViewModel @Inject constructor(
     var newPrice by mutableStateOf("")
     var selectedIndex by mutableStateOf<Int?>(null)
     var cartQuantity by mutableStateOf(1)
-    var deliveryCharges by mutableStateOf("200")
+    var deliveryCharges by mutableStateOf("50")
 
     init {
         getCartItems()

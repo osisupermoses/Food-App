@@ -83,6 +83,8 @@
     <string name="please_input_an_address">Please input an address</string>
     <string name="entries_saved">Entries saved successfully</string>
     <string name="please_enter_a_valid_expiry_date">Please enter a valid expiry number</string>
+    <string name="expiry_number_cannot_be_blank">Expiry number cannot be blank</string>
+    <string name="card_holder_field_cannot_be_blank">Card holder field cannot be blank</string>
     <string name="please_enter_a_valid_cvv_date">Please enter a valid CVV number</string>
     <string name="please_enter_a_valid_card_num">Please enter a valid card number</string>
     <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s) or symbols</string>

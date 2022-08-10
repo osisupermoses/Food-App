@@ -3,7 +3,6 @@ package com.osisupermoses.food_ordering_app.navigation
 import androidx.compose.animation.*
 import androidx.compose.runtime.Composable
 import androidx.navigation.*
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.osisupermoses.food_ordering_app.common.Constants
@@ -90,7 +89,7 @@ internal fun SetUpNavGraphNoBottomBar(
         composable(
             route = Screens.NoBottomBarScreens.RecipesDetailsScreen.route + "/{${Constants.FOOD_ID}}",
             arguments = listOf(
-                navArgument(Constants.FOOD_ID) { type = NavType.LongType },
+                navArgument(Constants.FOOD_ID) { type = NavType.StringType },
 //                navArgument(Constants.RESTAURANT_ID) { type = NavType.IntType},
             )
         ) {
@@ -114,20 +113,21 @@ internal fun SetUpNavGraphNoBottomBar(
                         Screens.NoBottomBarScreens.RecipesDetailsScreen.route + "/$recipeItemId"
                     )
                 },
-                toCheckoutScreen = { subTotal, deliveryFee ->
+                toCheckoutScreen = { subTotal, deliveryFee, isFromCart ->
                     navController.navigate(
                         Screens.NoBottomBarScreens.CheckoutScreen.route +
-                                "/${subTotal}/${deliveryFee}"
+                                "/${subTotal}/${deliveryFee}/${isFromCart}"
                     )
                 }
             )
         }
         composable(
             route = Screens.NoBottomBarScreens.CheckoutScreen.route +
-                    "/{${Constants.ITEM_PRICE}}/{${Constants.DELIVERY_FEE}}",
+                    "/{${Constants.ITEM_PRICE}}/{${Constants.DELIVERY_FEE}}/{${Constants.IS_FROM_CART}}",
             arguments = listOf(
                 navArgument(Constants.ITEM_PRICE) { type = NavType.StringType },
                 navArgument(Constants.DELIVERY_FEE) { type = NavType.StringType},
+                navArgument(Constants.IS_FROM_CART) { type = NavType.BoolType},
             )
         ) {
             CheckoutScreen (

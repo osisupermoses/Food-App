@@ -260,7 +260,6 @@ fun CheckoutScreen(
                         twoOptionsNeeded = true,
                         onDismiss = {
                             viewModel.errorDialogIsVisible = false
-                            goToMenuScreen.invoke()
                         },
                         onRetry = {
                             viewModel.onCheckoutClick(context = context)

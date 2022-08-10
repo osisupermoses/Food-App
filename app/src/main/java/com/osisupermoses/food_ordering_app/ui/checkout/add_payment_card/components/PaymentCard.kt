@@ -46,7 +46,6 @@ fun PaymentCard(
         cardNumber.text.startsWith("1") ||
                 cardNumber.text.startsWith("2") ||
                 cardNumber.text.startsWith("3") ||
-                cardNumber.text.startsWith("5") ||
                 cardNumber.text.startsWith("6") ||
                 cardNumber.text.startsWith("7") ||
                 cardNumber.text.startsWith("8") ||
@@ -82,7 +81,7 @@ fun PaymentCard(
     val length =
         if (cardType == CardType.MasterCard || cardType == CardType.Visa) 16
         else 18
-    val takeValue = if (cardType == CardType.Verve) 18 else 16
+
     val initial =
         if (cardType == CardType.MasterCard || cardType == CardType.Visa)
             remember { "*****************" }
@@ -272,7 +271,7 @@ fun PaymentCard(
 @Composable
 fun PreviewPaymentCard(){
     PaymentCard(
-        TextFieldValue("Mohamed"),
+        TextFieldValue("Abiodun"),
         TextFieldValue("*****************"),
         TextFieldValue("0224"),
         TextFieldValue("123")

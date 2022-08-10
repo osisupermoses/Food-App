@@ -45,7 +45,7 @@ class RecipeDetailsViewModel @Inject constructor(
     val errorChannel = _errorChannel.receiveAsFlow()
     var recipeItem by mutableStateOf<RecipesItem?>(null)
     var itemAlreadyExists = mutableStateOf(false)
-    private val foodId = savedStateHandle.get<Long>(Constants.FOOD_ID)!!
+    private val foodId = savedStateHandle.get<String>(Constants.FOOD_ID)!!
 
     init {
         viewModelScope.launch {
@@ -75,7 +75,7 @@ class RecipeDetailsViewModel @Inject constructor(
         return dataStoreRepository.getRecipeDetailsImages(recipesItem)
     }
 
-    private suspend fun getRecipeDetails(id: Long) {
+    private suspend fun getRecipeDetails(id: String) {
         _state.value = RecipesDetailsViewState(isLoading = true)
         authRepository.getRestaurantInfoFromFirestore().onEach { response ->
             when (response) {

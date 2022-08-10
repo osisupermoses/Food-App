@@ -22,6 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -87,12 +88,12 @@ class ListItemViewModel @Inject constructor(
         }
     }
 
-    private val randomLongFood = (0..99999999999).random()
-    private val randomLongRecipe = (0..99999999999).random()
-    private val randomLongRestaurant = (0..99999999999).random()
+    private val foodUUID = UUID.randomUUID()
+    private val recipeUUID = UUID.randomUUID()
+    private val RestaurantUUID = UUID.randomUUID()
 
     private fun restaurantItem() = Restaurant(
-        restaurantId = randomLongRestaurant,
+        restaurantId = RestaurantUUID.toString(),
         frontalImage =
             if (_listOfSelectedImages.size > 1) _listOfSelectedImages.last().toString()
             else _listOfSelectedImages.first().toString(),
@@ -102,7 +103,7 @@ class ListItemViewModel @Inject constructor(
         dateAdded = System.currentTimeMillis(),
         food = listOf(
             Food(
-                id = randomLongFood,
+                id = foodUUID.toString(),
                 name = productTitle,
                 price = productPrice.replace(",", "").toDouble(),
                 image = _listOfSelectedImages.first().toString(),
@@ -110,8 +111,8 @@ class ListItemViewModel @Inject constructor(
                 foodCategory = "African food",
                 orderRating = 0.00,
                 recipesItem = RecipesItem(
-                    id = randomLongRecipe,
-                    foodId = randomLongFood,
+                    id = recipeUUID.toString(),
+                    foodId = foodUUID.toString(),
                     sustainable = true,
                     glutenFree = true,
                     veryPopular = true,
