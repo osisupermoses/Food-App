@@ -77,7 +77,7 @@
     <string name="expiry_date">Expiry date</string>
     <string name="cvc">CVC</string>
     <string name="payment_successful">Payment was successful!</string>
-    <string name="unsuccessful_payment">Oops.. Payment was not successful.</string>
+    <string name="unsuccessful_payment">Oops.. Payment was not successful</string>
     <string name="please_select_a_card">Please select a card</string>
     <string name="address_field_cannot_be_blank">Address field can\'t be blank</string>
     <string name="please_input_an_address">Please input an address</string>
@@ -90,6 +90,8 @@
     <string name="card_number_expiry_number_cvv_cannot">Card, expiry and cvv numbers can\'t contain letter(s) or symbols</string>
     <string name="card_was_successfully_deleted">Card was successfully deleted</string>
     <string name="could_not_delete_card">Could not delete card. Check your internet connection and retry.</string>
+    <string name="could_not_delete_cart_item">Could not delete cart item. Check your internet connection and retry.</string>
+    <string name="could_not_cart_item">Error deleting removing item from cart.</string>
     <string name="selected_card_type_can_only_be_16_digits_max">Selected card type can only have a maximum of 16 digits</string>
     <string name="this_feature_is_coming_soon">This feature is coming soon...</string>
     <string name="log_out">Log out</string>

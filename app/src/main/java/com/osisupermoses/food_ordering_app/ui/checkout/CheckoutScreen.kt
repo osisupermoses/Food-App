@@ -263,7 +263,6 @@ fun CheckoutScreen(
                         },
                         onRetry = {
                             viewModel.onCheckoutClick(context = context)
-                            viewModel.errorDialogIsVisible = false
                         }
                     )
                 }

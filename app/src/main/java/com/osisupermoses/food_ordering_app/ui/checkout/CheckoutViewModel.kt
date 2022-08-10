@@ -1,6 +1,7 @@
 package com.osisupermoses.food_ordering_app.ui.checkout
 
 import android.content.Context
+import android.os.Parcelable
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,7 @@ import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
 import com.osisupermoses.food_ordering_app.domain.model.Address
 import com.osisupermoses.food_ordering_app.domain.model.Card
+import com.osisupermoses.food_ordering_app.domain.model.CardIds
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.util.UiText
 import com.osisupermoses.food_ordering_app.util.paystack.CheckoutActivity
@@ -27,6 +29,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import java.io.Serializable
 import java.util.*
 import javax.inject.Inject
 import kotlin.NoSuchElementException
@@ -65,7 +70,8 @@ class CheckoutViewModel @Inject constructor(
     val currencySymbol by mutableStateOf("₦")
     val itemPrice = savedStateHandle.get<String>(Constants.ITEM_PRICE)!!
     val deliveryFee = savedStateHandle.get<String>(Constants.DELIVERY_FEE)!!
-    val isFromCart = savedStateHandle.get<Boolean>(Constants.IS_FROM_CART)!!
+    private val isFromCart = savedStateHandle.get<Boolean>(Constants.IS_FROM_CART)!!
+    private val cartIds = savedStateHandle.get<String>(Constants.CART_ITEMS_IDS)!!
     var addressList: List<Address> = listOf()
     var cardList: List<Card> = listOf()
     var transactionReference by mutableStateOf("")
@@ -77,6 +83,7 @@ class CheckoutViewModel @Inject constructor(
         paystackCheckout.initializePaystack()
         getAddress()
         getCardsFromFirestore()
+        Log.i(TAG, "CART ITEMS ID: $cartIds")
     }
 
     // SEND CARD DETAILS TO PAYSTACK AND RETURNS RESPONSES IN FORM OF STRING
@@ -90,6 +97,7 @@ class CheckoutViewModel @Inject constructor(
         successScreen: () -> Unit = {},
         failedScreen: () -> Unit = {}
     ) {
+        errorDialogIsVisible = false
         state.value = CheckoutScreenState(isLoading = true)
         performCharge(
             cardNumber = cardNumber,
@@ -106,8 +114,9 @@ class CheckoutViewModel @Inject constructor(
                         "AMOUNT: $amount, CUSTOMEREMAIL: $customerEmail"
                 )
                 if (isFromCart) {
-                    clearCartItems()
-                    successScreen
+                    clearCartItems {
+                        successScreen.invoke()
+                    }
                 } else successScreen()
             },
             onFailed = {
@@ -300,8 +309,24 @@ class CheckoutViewModel @Inject constructor(
     }
 
     // THIS CLEARS ALL ITEMS CHECKED OUT THROUGH CART
-    private fun clearCartItems() {
-        TODO("Not yet implemented")
+    private fun clearCartItems(nextScreen: () -> Unit) {
+        val decodedJson  = Json.decodeFromString<CardIds>(cartIds)
+        Log.i(TAG, "DECODED CARTIDS: ${decodedJson.cardIds}")
+        for (id in decodedJson.cardIds) {
+            FirebaseFirestore.getInstance()
+                .collection(Constants.DB_Collection_CartItems)
+                .document(id)
+                .delete()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        state.value = CheckoutScreenState(isLoading = false)
+                        nextScreen.invoke()
+                    }
+                }
+                .addOnFailureListener {
+                    Log.i(TAG, it.message!!)
+                }
+        }
     }
 
     // GET SAVED ADDRESS FROM DATASTORE(i.e just like it SharedPref)

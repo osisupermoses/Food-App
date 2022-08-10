@@ -11,6 +11,7 @@ object Constants {
     const val ITEM_PRICE = "itemPrice"
     const val DELIVERY_FEE = "deliveryFee"
     const val IS_FROM_CART = "isFromCheckout"
+    const val CART_ITEMS_IDS = "CartItemsIds"
 
     const val CARD_ID = "cardId"
 

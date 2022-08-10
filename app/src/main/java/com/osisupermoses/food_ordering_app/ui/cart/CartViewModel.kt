@@ -14,6 +14,7 @@ import com.osisupermoses.food_ordering_app.R
 import com.osisupermoses.food_ordering_app.common.Constants
 import com.osisupermoses.food_ordering_app.common.Resource
 import com.osisupermoses.food_ordering_app.data.pref.repository.DataStoreRepository
+import com.osisupermoses.food_ordering_app.domain.model.CardIds
 import com.osisupermoses.food_ordering_app.domain.model.CartItem
 import com.osisupermoses.food_ordering_app.domain.repository.AuthRepository
 import com.osisupermoses.food_ordering_app.ui.cart.components.CartScreenState
@@ -24,6 +25,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @HiltViewModel
@@ -46,6 +49,9 @@ class CartViewModel @Inject constructor(
     var cartQuantity by mutableStateOf(1)
     var deliveryCharges by mutableStateOf("50")
 
+    var isFromCart by mutableStateOf(false)
+    var cartItemsIds = mutableListOf<String>()
+
     init {
         getCartItems()
     }
@@ -60,9 +66,13 @@ class CartViewModel @Inject constructor(
                     }
                     is Resource.Success -> {
                         val cartItems = result.data?.toList()!!.filter { it.userId == firebaseAuth.currentUser?.uid }
+                        for (cartItem in cartItems) {
+                            cartItemsIds.add(cartItem.id.toString())
+                        }
                         state = CartScreenState(isLoading = false)
                         cartItemList = cartItems
                         Log.i(TAG, "FIREBASE RESPONSE: ${result.data}")
+                        Log.i(TAG, "CART ITEMS ID: ${cartItemsIds.size}")
                     }
                     is Resource.Error -> {
                         state = CartScreenState(
@@ -150,9 +160,17 @@ class CartViewModel @Inject constructor(
                 state = CartScreenState(isLoading = false)
                 viewModelScope.launch {
                     Log.e("Error", "Error deleting document", it)
-                    _errorChannel.send(UiText.StringResource(R.string.could_not_delete_card))
+                    _errorChannel.send(UiText.StringResource(R.string.could_not_delete_cart_item))
                 }
             }
+    }
+
+    fun toCheckoutClick(nextScreen: (String) -> Unit) {
+        val params = CardIds(cartItemsIds)
+        val listOfIds = Uri.encode(Json.encodeToString(params))
+        Log.i(TAG, "LIST OF IDS: $listOfIds")
+        isFromCart = true
+        nextScreen.invoke(listOfIds)
     }
 
     fun onItemClick(index: Int, toItemDetail: () -> Unit) {
