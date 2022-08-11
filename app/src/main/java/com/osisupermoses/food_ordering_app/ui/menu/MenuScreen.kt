@@ -64,6 +64,7 @@ fun MenuScreen(
     val permissionState = rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE)
     val lifecycleOwner = LocalLifecycleOwner.current
 
+    val emptyString by remember { mutableStateOf(R.string.it_is_empty_here) }
 //    val contentUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cursor.getLong(id))
 
     DisposableEffect(
@@ -164,136 +165,139 @@ fun MenuScreen(
             },
             scaffoldState = scaffoldState
         ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .background(color = Color.White)
-                    .fillMaxSize()
-            ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxWidth()
+            if (!viewModel.restaurantList.isNullOrEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .background(color = Color.White)
+                        .fillMaxSize()
                 ) {
-                    item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
-                    item {
-                        Header(menuTitle = stringResource(R.string.fast_and_delicious))
-                        LazyRow {
-                            item {
-                                Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
-                            }
-                            state.headerList?.let { listOfMenuItem ->
-                                itemsIndexed(listOfMenuItem.toList()) { index, menuItem ->
-                                    MenuBoxItem(
-                                        modifier = Modifier.wrapContentSize(),
-                                        icon = menuItem.icon,
-                                        text = menuItem.header,
-                                        textStyle = MaterialTheme.typography.h6.copy(
-                                            color = Color.Black,
-                                            fontSize = 20.sp,
-                                            fontWeight = FontWeight.Normal
-                                        ),
-                                        hasGoldBackground = index == viewModel.topClickIndex.value,
-                                        backgroundColor = GoldYellow
-                                    ) {
-                                        viewModel.topClickIndex.value = index
+                    LazyColumn(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        item { Spacer(modifier = Modifier.height(MaterialTheme.spacing.small)) }
+                        item {
+                            Header(menuTitle = stringResource(R.string.fast_and_delicious))
+                            LazyRow {
+                                item {
+                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
+                                }
+                                state.headerList?.let { listOfMenuItem ->
+                                    itemsIndexed(listOfMenuItem.toList()) { index, menuItem ->
+                                        MenuBoxItem(
+                                            modifier = Modifier.wrapContentSize(),
+                                            icon = menuItem.icon,
+                                            text = menuItem.header,
+                                            textStyle = MaterialTheme.typography.h6.copy(
+                                                color = Color.Black,
+                                                fontSize = 20.sp,
+                                                fontWeight = FontWeight.Normal
+                                            ),
+                                            hasGoldBackground = index == viewModel.topClickIndex.value,
+                                            backgroundColor = GoldYellow
+                                        ) {
+                                            viewModel.topClickIndex.value = index
+                                        }
+                                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
                                     }
-                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.width(12.dp))
                                 }
                             }
-                            item {
-                                Spacer(modifier = Modifier.width(12.dp))
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-                        SectionHeader(sectionTitle = stringResource(id = R.string.popular))
-                        LazyRow {
-                            item {
-                                Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
-                            }
-                            viewModel.foods?.let { foodList ->
-                                val listOfFood =
-                                    if (permissionState.hasPermission) foodList
-                                    else emptyList()
-                                itemsIndexed(foodList) { index, food ->
-                                    PopularItem(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(MaterialTheme.spacing.small))
-                                            .wrapContentHeight(),
-                                        image = viewModel.getPopularImageUri(food),
-                                        foodName = food.name,
-                                        price = food.price!!,
-                                        estDeliveryTime = food.estDeliveryTime,
-                                        orderRating = food.orderRating!!,
-                                        context = context,
-                                        onRatingClick = { }
-                                    ) { toFoodDetailsScreen.invoke(food.id!!) }
-                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+                            SectionHeader(sectionTitle = stringResource(id = R.string.popular))
+                            LazyRow {
+                                item {
+                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
+                                }
+                                viewModel.foods?.let { foodList ->
+                                    val listOfFood =
+                                        if (permissionState.hasPermission) foodList
+                                        else emptyList()
+                                    itemsIndexed(foodList) { index, food ->
+                                        PopularItem(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(MaterialTheme.spacing.small))
+                                                .wrapContentHeight(),
+                                            image = viewModel.getPopularImageUri(food),
+                                            foodName = food.name,
+                                            price = food.price!!,
+                                            estDeliveryTime = food.estDeliveryTime,
+                                            orderRating = food.orderRating!!,
+                                            context = context,
+                                            onRatingClick = { }
+                                        ) { toFoodDetailsScreen.invoke(food.id!!) }
+                                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+                                    }
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.width(12.dp))
                                 }
                             }
-                            item {
-                                Spacer(modifier = Modifier.width(12.dp))
-                            }
-                        }
-                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
-                        SectionHeader(sectionTitle = stringResource(id = R.string.all_restaurants))
-                        LazyRow {
-                            item {
-                                Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
-                            }
-                            viewModel.restaurantList?.let { restaurants ->
-                                val listOfRestaurants =
-                                    if (permissionState.hasPermission) restaurants
-                                    else emptyList()
-                                itemsIndexed(restaurants) { index, restaurant ->
-                                    RestaurantItem(
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(MaterialTheme.spacing.small))
-                                            .wrapContentHeight(),
-                                        frontalImage = viewModel.getRestaurantFrontalImageUri(
-                                            restaurant
-                                        ),
-                                        restaurantName = restaurant.restaurantName!!,
-                                        restaurantReviewScore = restaurant.restaurantReviews ?: 0.0,
-                                        context = context,
-                                        onReviewScoreClick = { }
-                                    ) {
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
+                            SectionHeader(sectionTitle = stringResource(id = R.string.all_restaurants))
+                            LazyRow {
+                                item {
+                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.medium))
+                                }
+                                viewModel.restaurantList?.let { restaurants ->
+                                    val listOfRestaurants =
+                                        if (permissionState.hasPermission) restaurants
+                                        else emptyList()
+                                    itemsIndexed(restaurants) { index, restaurant ->
+                                        RestaurantItem(
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(MaterialTheme.spacing.small))
+                                                .wrapContentHeight(),
+                                            frontalImage = viewModel.getRestaurantFrontalImageUri(
+                                                restaurant
+                                            ),
+                                            restaurantName = restaurant.restaurantName!!,
+                                            restaurantReviewScore = restaurant.restaurantReviews
+                                                ?: 0.0,
+                                            context = context,
+                                            onReviewScoreClick = { }
+                                        ) {
 //                                    toRestaurantDetailScreen.invoke()
-                                        Toast.makeText(
-                                            context,
-                                            context.getString(R.string.this_feature_is_coming_soon),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                            Toast.makeText(
+                                                context,
+                                                context.getString(R.string.this_feature_is_coming_soon),
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
                                     }
-                                    Spacer(modifier = Modifier.width(MaterialTheme.spacing.small))
+                                }
+                                item {
+                                    Spacer(modifier = Modifier.width(12.dp))
                                 }
                             }
-                            item {
-                                Spacer(modifier = Modifier.width(12.dp))
-                            }
+                            Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                         }
-                        Spacer(modifier = Modifier.height(MaterialTheme.spacing.large))
                     }
                 }
-                if (state.isLoading) {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        CustomCircularProgressIndicator()
-                    }
+
+            } else if (viewModel.restaurantList.isNullOrEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(id = emptyString),
+                        style = MaterialTheme.typography.h6.copy(color = Color.LightGray),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .fillMaxWidth()
+                    )
                 }
             }
-        }
-    } else if (viewModel.restaurantList.isEmpty()) {
-        val emptyString by remember { mutableStateOf("It is empty here!! Please add some items.") }
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = emptyString,
-                style = MaterialTheme.typography.h6.copy(color = Color.LightGray),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .padding(20.dp)
-                    .fillMaxWidth()
-            )
+            if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CustomCircularProgressIndicator()
+                }
+            }
         }
     } else Box(
         modifier = Modifier.fillMaxSize(),

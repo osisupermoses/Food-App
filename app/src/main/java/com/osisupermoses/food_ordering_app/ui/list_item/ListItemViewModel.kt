@@ -2,10 +2,7 @@ package com.osisupermoses.food_ordering_app.ui.list_item
 
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
@@ -63,7 +60,7 @@ class ListItemViewModel @Inject constructor(
         val updatedImageList = _listOfSelectedImages
         viewModelScope.launch {
             updatedImageList.removeAt(index)
-                _listOfSelectedImages.addAll(updatedImageList.distinct())
+//                _listOfSelectedImages.addAll(updatedImageList.distinct())
         }
     }
 
@@ -71,7 +68,7 @@ class ListItemViewModel @Inject constructor(
         viewModelScope.launch {
             state = ListItemScreenState(isLoading = true)
             if (
-                _listOfSelectedImages.isNotEmpty() &&
+                listOfSelectedImages.isNotEmpty() &&
                 businessName.isNotBlank() &&
                 productDescription.isNotBlank() &&
                 productPrice.isNotBlank() &&
@@ -79,12 +76,14 @@ class ListItemViewModel @Inject constructor(
                 productQuantity.isNotBlank()
             ) {
                 saveToFirestore(restaurantItem(), nextScreen)
-            } else if (_listOfSelectedImages.isEmpty()) {
+            } else if (_listOfSelectedImages.size < 2) {
+                state = ListItemScreenState(isLoading = false)
                 _errorChannel.send(UiText.StringResource(R.string.please_choose_images))
             } else {
+                state = ListItemScreenState(isLoading = false)
                 _errorChannel.send(UiText.StringResource(R.string.you_have_to_fill_all_fields))
             }
-            Log.i(TAG, "LIST OF URI: ${_listOfSelectedImages}")
+            Log.i(TAG, "LIST OF URI: $_listOfSelectedImages")
         }
     }
 

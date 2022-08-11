@@ -1,16 +1,6 @@
 package com.osisupermoses.food_ordering_app.ui.menu
 
-import android.app.Activity
-import android.content.ContentUris
 import android.content.Context
-import android.database.Cursor
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +24,6 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
-import java.io.*
 import javax.inject.Inject
 
 
@@ -54,7 +43,7 @@ class MenuScreenViewModel @Inject constructor(
 
     var isAdmin by mutableStateOf(false)
     var accountName by mutableStateOf("")
-    var restaurantList: List<Restaurant> = mutableListOf()
+    var restaurantList: List<Restaurant>? = listOf()
     var foods: List<Food> = mutableListOf()
     var userIsDeleted by mutableStateOf(false)
 
@@ -64,7 +53,8 @@ class MenuScreenViewModel @Inject constructor(
     val topClickIndex = mutableStateOf(0)
 
     init {
-        getMenuScreenItems()
+        getFirestoreRestaurantItems()
+        verifyIfUserHasAdminRights()
     }
 
     fun getPopularImageUri(food: Food): String? {
@@ -75,20 +65,15 @@ class MenuScreenViewModel @Inject constructor(
         return dataStoreRepository.getImageUri(restaurant.frontalImage!!.toUri())
     }
 
-    private fun getMenuScreenItems() {
+    private fun verifyIfUserHasAdminRights() {
         viewModelScope.launch {
             state.value = MenuState(isLoading = true)
-
-            // FIRESTORE DATA
-            val getFirestoreUsers = async { authRepo.getUserInfoFromFirestore() }
-            val getFirestoreRestaurants = async { authRepo.getRestaurantInfoFromFirestore() }
-
             // FAKE REPOSITORY DATA
             val getFoods = async { repository.getFoodList() }
             val getRestaurants = async { repository.getRestaurantList() }
 
             // CHECKS WHETHER USER HAS ADMIN RIGHTS OR NOT
-            getFirestoreUsers.await().onEach { response ->
+            authRepo.getUserInfoFromFirestore().onEach { response ->
                 when (response) {
                     is Resource.Success -> {
                         state.value = MenuState(isLoading = false)
@@ -109,34 +94,41 @@ class MenuScreenViewModel @Inject constructor(
                     }
                     else -> Unit
                 }
-            }.launchIn(viewModelScope)
-
-            // GETTING LIST OF RESTAURANTS FROM FIREBASE
-            getFirestoreRestaurants.await().onEach { response ->
-                when(response) {
-                    is Resource.Success -> {
-                        state.value = MenuState(isLoading = false)
-                        val savedData = response.data?.toList()
-//                        val currentUserRestaurants = user?.filter { it.userId == auth.currentUser?.uid }
-                        if (savedData != null) {
-                            restaurantList = savedData
-                            foods = savedData.flatMap { it.food!! }
-
-                            Log.i(TAG, "FIREBASE RESTAURANT LIST: $restaurantList")
-                            Log.i(TAG, "FIREBASE FOODS: $foods")
-                        }
-                    }
-                    is Resource.Error -> {
-                        state.value = MenuState(
-                            isLoading = false,
-                            error = response.message ?: "Unknown Error"
-                        )
-                        Log.i(TAG, "RESTAURANTS: ${response.message!!}")
-                        _errorChannel.send(UiText.DynamicString(response.message.toString()))
-                    }
-                    else -> Unit
-                }
             }.launchIn(this)
+        }
+    }
+
+    private fun getFirestoreRestaurantItems() {
+        viewModelScope.launch {
+            state.value = MenuState(isLoading = true)
+            withContext(Dispatchers.IO) {
+                // GETTING LIST OF RESTAURANTS FROM FIREBASE
+                authRepo.getRestaurantInfoFromFirestore().onEach { response ->
+                    when (response) {
+                        is Resource.Success -> {
+                            val savedData = response.data?.toList()
+//                        val currentUserRestaurants = user?.filter { it.userId == auth.currentUser?.uid }
+                            if (savedData != null) {
+                                restaurantList = savedData
+                                foods = savedData.flatMap { it.food!! }
+                                state.value = MenuState(isLoading = false)
+
+                                Log.i(TAG, "FIREBASE RESTAURANT LIST: $restaurantList")
+                                Log.i(TAG, "FIREBASE FOODS: $foods")
+                            }
+                        }
+                        is Resource.Error -> {
+                            state.value = MenuState(
+                                isLoading = false,
+                                error = response.message ?: "Unknown Error"
+                            )
+                            Log.i(TAG, "RESTAURANTS: ${response.message!!}")
+                            _errorChannel.send(UiText.DynamicString(response.message.toString()))
+                        }
+                        else -> Unit
+                    }
+                }.launchIn(this)
+            }
         }
     }
 

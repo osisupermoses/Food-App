@@ -212,6 +212,7 @@ fun ListItemScreen(
                     title = stringResource(R.string.successful_listing),
                     desc = stringResource(R.string.item_was_successfully),
                     onOkayClick = {
+                        viewModel.successDialogIsVisible = false
                         goToMenuScreen.invoke()
                     }
                 )

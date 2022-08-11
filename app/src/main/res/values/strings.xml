@@ -101,7 +101,7 @@
     <string name="password_cannot_be_less_than_6_digits">Password cannot be less than 6 in count</string>
     <string name="add_product">Add Product</string>
     <string name="you_denied_permission">You denied permission. Kindly go to settings to fix it.</string>
-    <string name="please_choose_images">Please choose image(s)</string>
+    <string name="please_choose_images">Please select at least two images</string>
     <string name="submit_listing">Submit Listing</string>
     <string name="enter_a_unique">Enter a unique name for your product here</string>
     <string name="product_nam">Product name</string>
@@ -124,4 +124,5 @@
     <string name="no_item_added">Oops! It is empty here. \nAdd some items</string>
     <string name="delivery_charge">Delivery Charge</string>
     <string name="pay_with_paystack">Pay with Paystack</string>
+    <string name="it_is_empty_here">Oops! It\'s empty here! \n Please go to Admin tab to add some items. \nPLEASE NOTE: To view the admin tab, you need to register as one.</string>
 </resources>
