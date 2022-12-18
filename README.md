@@ -19,9 +19,10 @@ devices using the following tools, libraries and architecture:
  
 * Architecture used - Clean Architecture
 
-This project is still ongoing and open for your contributions.
+* UI Designs was dribble-inspired and a larger part was improvised. 
 
-It was built for the purpose of an assessment aimed at securing a role.
+
+It was built for the purpose of an assessment aimed at securing a role. 
 
 
 ## App Flow
