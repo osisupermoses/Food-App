@@ -19,7 +19,7 @@ devices using the following tools, libraries and architecture:
  
 * Architecture used - Clean Architecture
 
-* UI Designs was dribble-inspired and a larger part was improvised. 
+* UI Designs were dribble-inspired and a larger part was improvised. 
 
 
 It was built for the purpose of an assessment aimed at securing a role. 
