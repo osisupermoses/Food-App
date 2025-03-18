@@ -17,7 +17,7 @@ devices using the following tools, libraries and architecture:
 
 * Paystack SDK - For making payment (you should it try with any of their test cards)
  
-* Architecture used - Clean Architecture
+* Architecture used - Clean Architecture with MVVM
 
 * UI Designs were dribble-inspired and a larger part was improvised. 
 
